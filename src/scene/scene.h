@@ -249,6 +249,11 @@ public:
 
     TransformRoot transformRoot;
 
+	double m_attConstant;
+	double m_attLinear;
+	double m_attQuatric;
+	double m_ambient;
+
 public:
 	Scene() 
 		: transformRoot(), objects(), lights() {}

@@ -17,6 +17,7 @@ public:
 
 
 	void getBuffer( unsigned char *&buf, int &w, int &h );
+	Scene* getScene() const { return scene; }
 	double aspectRatio();
 	void traceSetup( int w, int h );
 	void traceLines( int start = 0, int stop = 10000000 );

@@ -42,11 +42,17 @@ public:
 	int			getSize();
 	int			getDepth();
 
+	double m_attConstant;
+	double m_attLinear;
+	double m_attQuatric;
+	double m_ambient;
+
 private:
 	RayTracer*	raytracer;
 
 	int			m_nSize;
 	int			m_nDepth;
+	
 
 // static class members
 	static Fl_Menu_Item menuitems[];
@@ -62,6 +68,10 @@ private:
 
 	static void cb_sizeSlides(Fl_Widget* o, void* v);
 	static void cb_depthSlides(Fl_Widget* o, void* v);
+	static void cb_attenuationConstant(Fl_Widget* o, void* v);
+	static void cb_attenuationLinear(Fl_Widget* o, void* v);
+	static void cb_attenuationQuatric(Fl_Widget* o, void* v);
+	static void cb_ambient(Fl_Widget* o, void* v);
 
 	static void cb_render(Fl_Widget* o, void* v);
 	static void cb_stop(Fl_Widget* o, void* v);
