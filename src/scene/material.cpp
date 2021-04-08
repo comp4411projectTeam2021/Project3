@@ -32,14 +32,14 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 		double theta = maximum(0, R.dot(V));
 		double specular = pow(theta, shininess * 128);
 		pointColor += prod(
-			(*j)->shadowAttenuation(P), 
+			(*j)->shadowAttenuation(P),
 			prod(
-				(*j)->getColor(P), 
-				(*j)->distanceAttenuation(P) * 
+				(*j)->getColor(P),
+				(*j)->distanceAttenuation(P) *
 				(
-					ks * specular + prod(vec3f(1, 1, 1) - kt, 
-					kd * maximum(0, N.dot(L)))
-				)
+					ks * specular + prod(vec3f(1, 1, 1) - kt,
+						kd * maximum(0, N.dot(L)))
+					)
 			)
 		);
 	}

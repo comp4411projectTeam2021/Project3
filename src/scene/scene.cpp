@@ -152,7 +152,7 @@ bool Scene::intersect( const ray& r, isect& i ) const
 	// try the non-bounded objects
 	for( j = nonboundedobjects.begin(); j != nonboundedobjects.end(); ++j ) {
 		if( (*j)->intersect( r, cur ) ) {
-			if( (!have_one || (cur.t < i.t)) && (cur.t > EPSILONS)) {
+			if((cur.t >= EPSILONS) && (!have_one || (cur.t < i.t))) {
 				i = cur;
 				have_one = true;
 			}
@@ -162,7 +162,7 @@ bool Scene::intersect( const ray& r, isect& i ) const
 	// try the bounded objects
 	for( j = boundedobjects.begin(); j != boundedobjects.end(); ++j ) {
 		if( (*j)->intersect( r, cur ) ) {
-			if(( !have_one || (cur.t < i.t) )&& (cur.t > EPSILONS)) {
+			if((cur.t>= EPSILONS) && (!have_one || (cur.t < i.t ) )) {
 				i = cur;
 				have_one = true;
 			}

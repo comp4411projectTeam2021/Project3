@@ -20,6 +20,9 @@ using namespace std;
 class Light;
 class Scene;
 
+const float EPSILONS = 0.0000000001f;
+
+
 class SceneElement
 {
 public:
@@ -289,5 +292,7 @@ private:
 	// are exempt from this requirement.
 	BoundingBox sceneBounds;
 };
+
+
 
 #endif // __SCENE_H__

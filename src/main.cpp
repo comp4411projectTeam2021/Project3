@@ -196,7 +196,7 @@ int main(int argc, char **argv) {
 		// graphics mode
 		traceUI=new TraceUI();
 		theRayTracer=new RayTracer();
-
+		theRayTracer->UI = traceUI;
 		traceUI->setRayTracer(theRayTracer);
 
 		Fl::visual(FL_DOUBLE|FL_INDEX);
