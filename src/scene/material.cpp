@@ -28,7 +28,7 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 	for (j = scene->beginLights(); j != scene->endLights(); ++j)
 	{
 		vec3f L = (*j)->getDirection(P);
-		vec3f R = (2 * N.dot(L) * N - L).normalize();
+		vec3f R = (L- 2 * N.dot(L) * N).normalize();
 		double theta = maximum(0, R.dot(V));
 		double specular = pow(theta, shininess * 128);
 		pointColor += prod(

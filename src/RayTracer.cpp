@@ -45,12 +45,13 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 		}
 		vec3f ref = vec3f( 0, 0, 0 );
 		if (depth < ((TraceUI*)UI)->getDepth()) {
-			vec3f in = r.at(1).normalize();
-			ray newR(r.at(i.t) , (2*(in*i.N)*i.N - in).normalize());
+			vec3f in = (r.at(i.t) - r.getPosition()).normalize();
+			i.N = i.N.normalize();
+			ray newR(r.at(i.t) , (in - 2*(in.dot(i.N))*i.N).normalize());
 			ref = traceRay(scene, newR, thresh, depth+1).clamp();
-			if (ref[0] != 0 || ref[1] != 0 || ref[2] != 0) {
-				printf("non zero");
-			}
+			//if (ref[0] != 0 || ref[1] != 0 || ref[2] != 0) {
+			//	printf("non zero");
+			//}
 			
 		}		
 		return m.shade(scene, r, i)  + prod(m.kr , ref);
