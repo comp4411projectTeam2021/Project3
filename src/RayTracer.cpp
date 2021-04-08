@@ -49,9 +49,7 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 			i.N = i.N.normalize();
 			ray newR(r.at(i.t) , (in - 2*(in.dot(i.N))*i.N).normalize());
 			ref = traceRay(scene, newR, thresh, depth+1).clamp();
-			//if (ref[0] != 0 || ref[1] != 0 || ref[2] != 0) {
-			//	printf("non zero");
-			//}
+
 			
 		}		
 		return m.shade(scene, r, i)  + prod(m.kr , ref);
