@@ -10,6 +10,9 @@
 #include "fileio/parse.h"
 #include "ui/TraceUI.h"
 
+#define PI 3.14159265
+
+
 // Trace a top-level ray through normalized window coordinates (x,y)
 // through the projection plane, and out into the scene.  All we do is
 // enter the main ray-tracing method, getting things started by plugging
@@ -24,7 +27,7 @@ vec3f RayTracer::trace( Scene *scene, double x, double y )
 // Do recursive ray tracing!  You'll want to insert a lot of code here
 // (or places called from here) to handle reflection, refraction, etc etc.
 vec3f RayTracer::traceRay( Scene *scene, const ray& r, 
-	const vec3f& thresh, int depth )
+	const vec3f& thresh, int depth,float index)
 {
 	isect i;
 
@@ -43,16 +46,29 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 		if (depth > 0) {
 			printf("");
 		}
-		vec3f ref = vec3f( 0, 0, 0 );
+		vec3f reflection = vec3f( 0, 0, 0 );
+		vec3f refraction = vec3f(0, 0, 0);
 		if (depth < ((TraceUI*)UI)->getDepth()) {
 			vec3f in = (r.at(i.t) - r.getPosition()).normalize();
 			i.N = i.N.normalize();
-			ray newR(r.at(i.t) , (in - 2*(in.dot(i.N))*i.N).normalize());
-			ref = traceRay(scene, newR, thresh, depth+1).clamp();
+			ray reflectionRay(r.at(i.t) , (in - 2*(in.dot(i.N))*i.N).normalize());
+			reflection = traceRay(scene, reflectionRay, thresh, depth+1).clamp();
 
+			if (m.kt[0] != 0 || m.kt[1] != 0 || m.kt[2] != 0) {// Obj is not completely solid
+				double inAngle = acos(i.N * in) * 180.0 / PI;
+				double test = (index == 1 ? 1 : m.index) * sin(inAngle) / (index == 1 ? m.index : 1);
+				
+				double refAngle = asin((index == 1 ? 1 : m.index) * sin(inAngle) / (index == 1 ? m.index : 1)) * 180.0 / PI;
+				refAngle = acos(sqrt(1 - (pow((index == 1 ? 1 : m.index), 2) / pow((index == 1 ? 1 : m.index), 2) * (1 - pow(cos(inAngle), 2))))) * 180.0 / PI;
+
+				vec3f refOut = -abs(cos(refAngle)) * i.N + abs(sin(refAngle) / sin(inAngle)) * (in + abs(cos(inAngle)) * i.N);
+				refOut = -abs(cos(refAngle)) * i.N + abs(sin(refAngle) / sin(inAngle)) * (in + abs(cos(inAngle)) * i.N);
+				ray refractionRay(r.at(i.t), (refOut).normalize());
+				refraction = traceRay(scene, refractionRay, thresh, depth + 1, (index == 1 ? m.index : 1)).clamp();
+			}
 			
 		}		
-		return m.shade(scene, r, i)  + prod(m.kr , ref);
+		return m.shade(scene, r, i)  + prod(m.kr , reflection) + prod(m.kt, refraction);
 	
 	} else {
 		// No intersection.  This ray travels to infinity, so we color
