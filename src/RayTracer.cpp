@@ -55,16 +55,38 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 			reflection = traceRay(scene, reflectionRay, thresh, depth+1).clamp();
 
 			if (m.kt[0] != 0 || m.kt[1] != 0 || m.kt[2] != 0) {// Obj is not completely solid
-				double inAngle = acos(i.N * in) * 180.0 / PI;
-				double test = (index == 1 ? 1 : m.index) * sin(inAngle) / (index == 1 ? m.index : 1);
-				
-				double refAngle = asin((index == 1 ? 1 : m.index) * sin(inAngle) / (index == 1 ? m.index : 1)) * 180.0 / PI;
-				refAngle = acos(sqrt(1 - (pow((index == 1 ? 1 : m.index), 2) / pow((index == 1 ? 1 : m.index), 2) * (1 - pow(cos(inAngle), 2))))) * 180.0 / PI;
+				//double inAngle = acos(i.N * in) * 180.0 / PI;
+				//double test = (index == 1 ? 1 : m.index) * sin(inAngle) / (index == 1 ? m.index : 1);
+				//
+				//double refAngle = asin((index == 1 ? 1 : m.index) * sin(inAngle) / (index == 1 ? m.index : 1)) * 180.0 / PI;
+				//if (1 - (pow((index == 1 ? 1 : m.index), 2) / pow((index == 1 ? 1 : m.index), 2) * (1 - pow(cos(inAngle), 2))) < 0) {
+				//	printf("Total ref");
+				//}
+				//refAngle = acos(sqrt(1 - (pow((index == 1 ? 1 : m.index), 2) / pow((index == 1 ? 1 : m.index), 2) * (1 - pow(cos(inAngle), 2))))) * 180.0 / PI;
+				//vec3f refOut = -abs(cos(refAngle)) * i.N + abs(sin(refAngle) / sin(inAngle)) * (in + abs(cos(inAngle)) * i.N);
 
-				vec3f refOut = -abs(cos(refAngle)) * i.N + abs(sin(refAngle) / sin(inAngle)) * (in + abs(cos(inAngle)) * i.N);
-				refOut = -abs(cos(refAngle)) * i.N + abs(sin(refAngle) / sin(inAngle)) * (in + abs(cos(inAngle)) * i.N);
-				ray refractionRay(r.at(i.t), (refOut).normalize());
-				refraction = traceRay(scene, refractionRay, thresh, depth + 1, (index == 1 ? m.index : 1)).clamp();
+				double ind = (index == 1 ? 1 / m.index : m.index);
+				double cosIn = -in*i.N ;
+				if (cosIn < 0) {
+					cosIn = in * i.N;
+				}
+				double cosRef = sqrt(1 - pow(ind, 2) * (1 - pow(cosIn, 2)));
+
+				double inAngle = acos(cosIn) * 180.0 / PI;
+
+				double refAngle = acos(cosRef) * 180.0 / PI;
+
+				if (isnan(cosRef) ){
+					//printf("Total ref");
+				}
+				else {
+					vec3f refOut = (-abs(cosRef) * i.N + abs(ind) * (in + abs(cosIn) * i.N)).normalize();
+
+					ray refractionRay(r.at(i.t), (refOut).normalize());
+					refraction = traceRay(scene, refractionRay, thresh, depth + 1, (index == 1 ? m.index : 1)).clamp();
+				}
+
+
 			}
 			
 		}		

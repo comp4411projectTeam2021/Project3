@@ -4,7 +4,8 @@
 #include "light.h"
 #include "../ui/TraceUI.h"
 extern TraceUI* traceUI;
-
+#include <typeinfo>
+#include "../SceneObjects/Sphere.h"
 
 
 void BoundingBox::operator=(const BoundingBox& target)
