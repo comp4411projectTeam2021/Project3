@@ -68,7 +68,7 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 				double ind = (index == 1 ? 1 / m.index : m.index);
 				double cosIn = -in*i.N ;
 				if (cosIn < 0) {
-					cosIn = in * i.N;
+					//cosIn = in * i.N;
 				}
 				double cosRef = sqrt(1 - pow(ind, 2) * (1 - pow(cosIn, 2)));
 
@@ -81,8 +81,12 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 				}
 				else {
 					vec3f refOut = (-abs(cosRef) * i.N + abs(ind) * (in + abs(cosIn) * i.N)).normalize();
-
-					ray refractionRay(r.at(i.t), (refOut).normalize());
+					vec3f testOut = refraction2(in, i.N, (index == 1 ? 1 : m.index), (index == 1 ? m.index:1 ));
+					double dis = acos(testOut * refOut) * 180.0 / PI;
+					if (dis > 0.1) {
+						printf("diff");
+					}
+					ray refractionRay(r.at(i.t), refOut);
 					refraction = traceRay(scene, refractionRay, thresh, depth + 1, (index == 1 ? m.index : 1)).clamp();
 				}
 
@@ -98,6 +102,46 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 		// is just black.
 
 		return vec3f( 0.0, 0.0, 0.0 );
+	}
+}
+
+//debug use ONLY
+vec3f RayTracer::refraction2(vec3f i, vec3f n, double n1, double n2)
+{
+	if (abs(abs(n * i) - 1) < RAY_EPSILON)
+		return i;
+
+	double sinTheta1 = sqrt(1 - pow(n * i, 2));
+	double sinTheta2 = (n1 * sinTheta1) / n2;
+	double theta1 = asin(sinTheta1);
+	double theta2 = asin(sinTheta2);
+	double sinTheta3 = sin(abs(theta1 - theta2));
+
+	if (n1 == n2)
+	{
+		return i;
+	}
+	else if (n1 > n2)
+	{
+		double critical = n2 / n1;
+
+		if (critical - sinTheta1 > RAY_EPSILON)
+		{
+			double sinAlpha = sin(3.1416 - theta2);
+			double fac = sinAlpha / sinTheta3;
+
+			return -(-i * fac + (-n)).normalize();
+		}
+		else
+		{
+			//TIR
+			return vec3f(0.0, 0.0, 0.0);
+		}
+	}
+	else
+	{
+		double fac = sinTheta2 / sinTheta3;
+		return (i * fac + (-n)).normalize();
 	}
 }
 
