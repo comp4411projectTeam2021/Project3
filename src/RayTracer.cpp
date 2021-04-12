@@ -9,6 +9,7 @@
 #include "fileio/read.h"
 #include "fileio/parse.h"
 #include "ui/TraceUI.h"
+#include <iostream>
 
 #define PI 3.14159265
 
@@ -246,8 +247,23 @@ void RayTracer::tracePixel( int i, int j )
 
 	double x = double(i)/double(buffer_width);
 	double y = double(j)/double(buffer_height);
-
-	col = trace( scene,x,y );
+	//std::cout << scene->m_supersampling << std::endl;
+	if(scene->m_supersampling==1)
+		col = trace( scene,x,y );
+	else
+	{
+		vec3f sum=vec3f(0,0,0);
+		int numSup = getScene()->m_supersampling;
+		double numSupD = double(getScene()->m_supersampling) - 1;
+		double X = (double(i) - 0.5) / double(buffer_width);
+		double Y = (double(j) - 0.5) / double(buffer_height);
+		double deltaX = 1.0 / double(buffer_width) / numSupD;
+		double deltaY = 1.0 / double(buffer_height) / numSupD;
+		for (int m = 0; m < numSup; m++)
+			for (int n = 0; n < numSup; n++)
+				sum += trace(scene, X + m * deltaX, Y + n * deltaY);
+		col = sum / (numSup * numSup);
+	}
 
 	unsigned char *pixel = buffer + ( i + j * buffer_width ) * 3;
 

@@ -117,6 +117,12 @@ void TraceUI::cb_threshold(Fl_Widget* o, void* v)
 	((TraceUI*)(o->user_data()))->m_threshold = double(((Fl_Slider*)o)->value());
 }
 
+void TraceUI::cb_supersampling(Fl_Widget* o, void* v)
+{
+	((TraceUI*)(o->user_data()))->m_supersampling = int(((Fl_Slider*)o)->value());
+}
+
+
 void TraceUI::cb_render(Fl_Widget* o, void* v)
 {
 	char buffer[256];
@@ -135,8 +141,10 @@ void TraceUI::cb_render(Fl_Widget* o, void* v)
 		pUI->raytracer->getScene()->m_attConstant = pUI->m_attConstant;
 		pUI->raytracer->getScene()->m_attLinear = pUI->m_attLinear;
 		pUI->raytracer->getScene()->m_attQuatric = pUI->m_attQuatric;
+		pUI->raytracer->getScene()->m_supersampling = pUI->m_supersampling;
 		pUI->raytracer->getScene()->m_ambient = vec3f(pUI->m_ambient, pUI->m_ambient, pUI->m_ambient);
 		pUI->raytracer->getScene()->m_threshold = vec3f(pUI->m_threshold, pUI->m_threshold, pUI->m_threshold);
+
 		
 		// Save the window label
 		const char *old_label = pUI->m_traceGlWindow->label();
@@ -245,7 +253,7 @@ TraceUI::TraceUI() {
 	// init.
 	m_nDepth = 0;
 	m_nSize = 150;
-	m_mainWindow = new Fl_Window(100, 40, 360, 300, "Ray <Not Loaded>");
+	m_mainWindow = new Fl_Window(100, 40, 360, 500, "Ray <Not Loaded>");
 		m_mainWindow->user_data((void*)(this));	// record self to be used by static callback functions
 		// install menu bar
 		m_menubar = new Fl_Menu_Bar(0, 0, 360, 25);
@@ -336,6 +344,18 @@ TraceUI::TraceUI() {
 		m_threshold_->value(1);
 		m_threshold_->align(FL_ALIGN_RIGHT);
 		m_threshold_->callback(cb_threshold);
+
+		m_supersampling_ = new Fl_Value_Slider(10, 205, 180, 20, "Num of sup-pixel");
+		m_supersampling_->user_data((void*)(this));	// record self to be used by static callback functions
+		m_supersampling_->type(FL_HOR_NICE_SLIDER);
+		m_supersampling_->labelfont(FL_COURIER);
+		m_supersampling_->labelsize(12);
+		m_supersampling_->minimum(1);
+		m_supersampling_->maximum(5);
+		m_supersampling_->step(1);
+		m_supersampling_->value(1);
+		m_supersampling_->align(FL_ALIGN_RIGHT);
+		m_supersampling_->callback(cb_supersampling);
 
 		m_renderButton = new Fl_Button(240, 27, 70, 25, "&Render");
 		m_renderButton->user_data((void*)(this));

@@ -252,6 +252,7 @@ public:
 
     TransformRoot transformRoot;
 
+	int m_supersampling = 1;
 	double m_attConstant;
 	double m_attLinear;
 	double m_attQuatric;

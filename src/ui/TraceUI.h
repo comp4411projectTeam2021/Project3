@@ -33,6 +33,7 @@ public:
 	Fl_Slider* m_attQuatric_;
 	Fl_Slider* m_ambient_;
 	Fl_Slider* m_threshold_;
+	Fl_Slider* m_supersampling_;
 
 	Fl_Button*			m_renderButton;
 	Fl_Button*			m_stopButton;
@@ -47,11 +48,14 @@ public:
 	int			getSize();
 	int			getDepth();
 
+	int m_supersampling = 1;
+
 	double m_attConstant;
 	double m_attLinear;
 	double m_attQuatric;
 	double m_ambient=1;
 	double m_threshold;
+	
 
 private:
 	RayTracer*	raytracer;
@@ -79,6 +83,7 @@ private:
 	static void cb_attenuationQuatric(Fl_Widget* o, void* v);
 	static void cb_ambient(Fl_Widget* o, void* v);
 	static void cb_threshold(Fl_Widget* o, void* v);
+	static void cb_supersampling(Fl_Widget* o, void* v);
 
 	static void cb_render(Fl_Widget* o, void* v);
 	static void cb_stop(Fl_Widget* o, void* v);
