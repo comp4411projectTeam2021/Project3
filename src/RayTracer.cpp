@@ -261,7 +261,10 @@ void RayTracer::tracePixel( int i, int j )
 		double deltaY = 1.0 / double(buffer_height) / numSupD;
 		for (int m = 0; m < numSup; m++)
 			for (int n = 0; n < numSup; n++)
-				sum += trace(scene, X + m * deltaX, Y + n * deltaY);
+				if(getScene()->m_jittering==1)
+					sum += trace(scene, X + m * deltaX + ((double)rand() / (RAND_MAX) * 2 - 1) / double(buffer_width), Y + n * deltaY + ((double)rand() / (RAND_MAX) * 2 - 1) / double(buffer_height));
+				else 
+					sum += trace(scene, X + m * deltaX, Y + n * deltaY);
 		col = sum / (numSup * numSup);
 	}
 

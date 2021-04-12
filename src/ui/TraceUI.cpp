@@ -122,6 +122,11 @@ void TraceUI::cb_supersampling(Fl_Widget* o, void* v)
 	((TraceUI*)(o->user_data()))->m_supersampling = int(((Fl_Slider*)o)->value());
 }
 
+void TraceUI::cb_jittering(Fl_Widget* o, void* v)
+{
+	((TraceUI*)(o->user_data()))->m_jittering = int(((Fl_Slider*)o)->value());
+}
+
 
 void TraceUI::cb_render(Fl_Widget* o, void* v)
 {
@@ -356,6 +361,18 @@ TraceUI::TraceUI() {
 		m_supersampling_->value(1);
 		m_supersampling_->align(FL_ALIGN_RIGHT);
 		m_supersampling_->callback(cb_supersampling);
+
+		m_jittering_ = new Fl_Value_Slider(10, 230, 180, 20, "Jittering");
+		m_jittering_->user_data((void*)(this));	// record self to be used by static callback functions
+		m_jittering_->type(FL_HOR_NICE_SLIDER);
+		m_jittering_->labelfont(FL_COURIER);
+		m_jittering_->labelsize(12);
+		m_jittering_->minimum(0);
+		m_jittering_->maximum(1);
+		m_jittering_->step(1);
+		m_jittering_->value(0);
+		m_jittering_->align(FL_ALIGN_RIGHT);
+		m_jittering_->callback(cb_jittering);
 
 		m_renderButton = new Fl_Button(240, 27, 70, 25, "&Render");
 		m_renderButton->user_data((void*)(this));
