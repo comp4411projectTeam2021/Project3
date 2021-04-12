@@ -255,7 +255,7 @@ public:
 	double m_attConstant;
 	double m_attLinear;
 	double m_attQuatric;
-	double m_ambient;
+	vec3f m_ambient=vec3f(1,1,1);
 
 public:
 	Scene() 

@@ -94,22 +94,22 @@ void TraceUI::cb_depthSlides(Fl_Widget* o, void* v)
 
 void TraceUI::cb_attenuationConstant(Fl_Widget* o, void* v)
 {
-	((TraceUI*)(o->user_data()))->m_attConstant = int(((Fl_Slider*)o)->value());
+	((TraceUI*)(o->user_data()))->m_attConstant = double(((Fl_Slider*)o)->value());
 }
 
 void TraceUI::cb_attenuationLinear(Fl_Widget* o, void* v)
 {
-	((TraceUI*)(o->user_data()))->m_attLinear = int(((Fl_Slider*)o)->value());
+	((TraceUI*)(o->user_data()))->m_attLinear = double(((Fl_Slider*)o)->value());
 }
 
 void TraceUI::cb_attenuationQuatric(Fl_Widget* o, void* v)
 {
-	((TraceUI*)(o->user_data()))->m_attQuatric = int(((Fl_Slider*)o)->value());
+	((TraceUI*)(o->user_data()))->m_attQuatric = double(((Fl_Slider*)o)->value());
 }
 
 void TraceUI::cb_ambient(Fl_Widget* o, void* v)
 {
-	((TraceUI*)(o->user_data()))->m_ambient = int(((Fl_Slider*)o)->value());
+	((TraceUI*)(o->user_data()))->m_ambient = double(((Fl_Slider*)o)->value());
 }
 
 void TraceUI::cb_render(Fl_Widget* o, void* v)
@@ -130,7 +130,7 @@ void TraceUI::cb_render(Fl_Widget* o, void* v)
 		pUI->raytracer->getScene()->m_attConstant = pUI->m_attConstant;
 		pUI->raytracer->getScene()->m_attLinear = pUI->m_attLinear;
 		pUI->raytracer->getScene()->m_attQuatric = pUI->m_attQuatric;
-		pUI->raytracer->getScene()->m_ambient = pUI->m_ambient;
+		pUI->raytracer->getScene()->m_ambient = vec3f(pUI->m_ambient, pUI->m_ambient, pUI->m_ambient);
 		
 		// Save the window label
 		const char *old_label = pUI->m_traceGlWindow->label();
@@ -271,53 +271,53 @@ TraceUI::TraceUI() {
 		m_sizeSlider->align(FL_ALIGN_RIGHT);
 		m_sizeSlider->callback(cb_sizeSlides);
 
-		m_sizeSlider = new Fl_Value_Slider(10, 80, 180, 20, "Attenuation, Constant");
-		m_sizeSlider->user_data((void*)(this));	// record self to be used by static callback functions
-		m_sizeSlider->type(FL_HOR_NICE_SLIDER);
-		m_sizeSlider->labelfont(FL_COURIER);
-		m_sizeSlider->labelsize(12);
-		m_sizeSlider->minimum(0.00);
-		m_sizeSlider->maximum(1.00);
-		m_sizeSlider->step(0.01);
-		m_sizeSlider->value(0.25);
-		m_sizeSlider->align(FL_ALIGN_RIGHT);
-		m_sizeSlider->callback(cb_attenuationConstant);
+		m_attConstant_ = new Fl_Value_Slider(10, 80, 180, 20, "Attenuation, Constant");
+		m_attConstant_->user_data((void*)(this));	// record self to be used by static callback functions
+		m_attConstant_->type(FL_HOR_NICE_SLIDER);
+		m_attConstant_->labelfont(FL_COURIER);
+		m_attConstant_->labelsize(12);
+		m_attConstant_->minimum(0.00);
+		m_attConstant_->maximum(1.00);
+		m_attConstant_->step(0.001);
+		m_attConstant_->value(0.1);
+		m_attConstant_->align(FL_ALIGN_RIGHT);
+		m_attConstant_->callback(cb_attenuationConstant);
 
-		m_sizeSlider = new Fl_Value_Slider(10, 105, 180, 20, "Attenuation, Linear");
-		m_sizeSlider->user_data((void*)(this));	// record self to be used by static callback functions
-		m_sizeSlider->type(FL_HOR_NICE_SLIDER);
-		m_sizeSlider->labelfont(FL_COURIER);
-		m_sizeSlider->labelsize(12);
-		m_sizeSlider->minimum(0.00);
-		m_sizeSlider->maximum(1.00);
-		m_sizeSlider->step(0.01);
-		m_sizeSlider->value(0.25);
-		m_sizeSlider->align(FL_ALIGN_RIGHT);
-		m_sizeSlider->callback(cb_attenuationLinear);
+		m_attLinear_ = new Fl_Value_Slider(10, 105, 180, 20, "Attenuation, Linear");
+		m_attLinear_->user_data((void*)(this));	// record self to be used by static callback functions
+		m_attLinear_->type(FL_HOR_NICE_SLIDER);
+		m_attLinear_->labelfont(FL_COURIER);
+		m_attLinear_->labelsize(12);
+		m_attLinear_->minimum(0.00);
+		m_attLinear_->maximum(1.00);
+		m_attLinear_->step(0.001);
+		m_attLinear_->value(0.1);
+		m_attLinear_->align(FL_ALIGN_RIGHT);
+		m_attLinear_->callback(cb_attenuationLinear);
 
-		m_sizeSlider = new Fl_Value_Slider(10, 130, 180, 20, "Attenuation, Quatric");
-		m_sizeSlider->user_data((void*)(this));	// record self to be used by static callback functions
-		m_sizeSlider->type(FL_HOR_NICE_SLIDER);
-		m_sizeSlider->labelfont(FL_COURIER);
-		m_sizeSlider->labelsize(12);
-		m_sizeSlider->minimum(0.00);
-		m_sizeSlider->maximum(1.00);
-		m_sizeSlider->step(0.01);
-		m_sizeSlider->value(0.5);
-		m_sizeSlider->align(FL_ALIGN_RIGHT);
-		m_sizeSlider->callback(cb_attenuationQuatric);
+		m_attQuatric_ = new Fl_Value_Slider(10, 130, 180, 20, "Attenuation, Quatric");
+		m_attQuatric_->user_data((void*)(this));	// record self to be used by static callback functions
+		m_attQuatric_->type(FL_HOR_NICE_SLIDER);
+		m_attQuatric_->labelfont(FL_COURIER);
+		m_attQuatric_->labelsize(12);
+		m_attQuatric_->minimum(0.00);
+		m_attQuatric_->maximum(1.00);
+		m_attQuatric_->step(0.001);
+		m_attQuatric_->value(0.1);
+		m_attQuatric_->align(FL_ALIGN_RIGHT);
+		m_attQuatric_->callback(cb_attenuationQuatric);
 
-		m_sizeSlider = new Fl_Value_Slider(10, 155, 180, 20, "Ambient Light");
-		m_sizeSlider->user_data((void*)(this));	// record self to be used by static callback functions
-		m_sizeSlider->type(FL_HOR_NICE_SLIDER);
-		m_sizeSlider->labelfont(FL_COURIER);
-		m_sizeSlider->labelsize(12);
-		m_sizeSlider->minimum(0.00);
-		m_sizeSlider->maximum(1.00);
-		m_sizeSlider->step(0.01);
-		m_sizeSlider->value(0.2);
-		m_sizeSlider->align(FL_ALIGN_RIGHT);
-		m_sizeSlider->callback(cb_ambient);
+		m_ambient_ = new Fl_Value_Slider(10, 155, 180, 20, "Ambient Light");
+		m_ambient_->user_data((void*)(this));	// record self to be used by static callback functions
+		m_ambient_->type(FL_HOR_NICE_SLIDER);
+		m_ambient_->labelfont(FL_COURIER);
+		m_ambient_->labelsize(12);
+		m_ambient_->minimum(0.00);
+		m_ambient_->maximum(1.00);
+		m_ambient_->step(0.01);
+		m_ambient_->value(1);
+		m_ambient_->align(FL_ALIGN_RIGHT);
+		m_ambient_->callback(cb_ambient);
 
 		m_renderButton = new Fl_Button(240, 27, 70, 25, "&Render");
 		m_renderButton->user_data((void*)(this));

@@ -28,6 +28,10 @@ public:
 
 	Fl_Slider*			m_sizeSlider;
 	Fl_Slider*			m_depthSlider;
+	Fl_Slider* m_attConstant_;
+	Fl_Slider* m_attLinear_;
+	Fl_Slider* m_attQuatric_;
+	Fl_Slider* m_ambient_;
 
 	Fl_Button*			m_renderButton;
 	Fl_Button*			m_stopButton;
@@ -45,7 +49,7 @@ public:
 	double m_attConstant;
 	double m_attLinear;
 	double m_attQuatric;
-	double m_ambient;
+	double m_ambient=1;
 
 private:
 	RayTracer*	raytracer;
