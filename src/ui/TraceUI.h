@@ -32,6 +32,7 @@ public:
 	Fl_Slider* m_attLinear_;
 	Fl_Slider* m_attQuatric_;
 	Fl_Slider* m_ambient_;
+	Fl_Slider* m_threshold_;
 
 	Fl_Button*			m_renderButton;
 	Fl_Button*			m_stopButton;
@@ -50,6 +51,7 @@ public:
 	double m_attLinear;
 	double m_attQuatric;
 	double m_ambient=1;
+	double m_threshold;
 
 private:
 	RayTracer*	raytracer;
@@ -76,6 +78,7 @@ private:
 	static void cb_attenuationLinear(Fl_Widget* o, void* v);
 	static void cb_attenuationQuatric(Fl_Widget* o, void* v);
 	static void cb_ambient(Fl_Widget* o, void* v);
+	static void cb_threshold(Fl_Widget* o, void* v);
 
 	static void cb_render(Fl_Widget* o, void* v);
 	static void cb_stop(Fl_Widget* o, void* v);

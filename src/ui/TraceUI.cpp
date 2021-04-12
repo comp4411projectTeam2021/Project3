@@ -112,6 +112,11 @@ void TraceUI::cb_ambient(Fl_Widget* o, void* v)
 	((TraceUI*)(o->user_data()))->m_ambient = double(((Fl_Slider*)o)->value());
 }
 
+void TraceUI::cb_threshold(Fl_Widget* o, void* v)
+{
+	((TraceUI*)(o->user_data()))->m_threshold = double(((Fl_Slider*)o)->value());
+}
+
 void TraceUI::cb_render(Fl_Widget* o, void* v)
 {
 	char buffer[256];
@@ -131,6 +136,7 @@ void TraceUI::cb_render(Fl_Widget* o, void* v)
 		pUI->raytracer->getScene()->m_attLinear = pUI->m_attLinear;
 		pUI->raytracer->getScene()->m_attQuatric = pUI->m_attQuatric;
 		pUI->raytracer->getScene()->m_ambient = vec3f(pUI->m_ambient, pUI->m_ambient, pUI->m_ambient);
+		pUI->raytracer->getScene()->m_threshold = vec3f(pUI->m_threshold, pUI->m_threshold, pUI->m_threshold);
 		
 		// Save the window label
 		const char *old_label = pUI->m_traceGlWindow->label();
@@ -318,6 +324,18 @@ TraceUI::TraceUI() {
 		m_ambient_->value(1);
 		m_ambient_->align(FL_ALIGN_RIGHT);
 		m_ambient_->callback(cb_ambient);
+
+		m_threshold_ = new Fl_Value_Slider(10, 180, 180, 20, "Threshold");
+		m_threshold_->user_data((void*)(this));	// record self to be used by static callback functions
+		m_threshold_->type(FL_HOR_NICE_SLIDER);
+		m_threshold_->labelfont(FL_COURIER);
+		m_threshold_->labelsize(12);
+		m_threshold_->minimum(0.00);
+		m_threshold_->maximum(1.00);
+		m_threshold_->step(0.01);
+		m_threshold_->value(1);
+		m_threshold_->align(FL_ALIGN_RIGHT);
+		m_threshold_->callback(cb_threshold);
 
 		m_renderButton = new Fl_Button(240, 27, 70, 25, "&Render");
 		m_renderButton->user_data((void*)(this));
