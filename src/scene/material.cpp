@@ -2,6 +2,15 @@
 #include "material.h"
 #include "light.h"
 #include <iostream>
+static Material* Air = nullptr;
+
+Material* Material::getAir()
+{
+	if (Air == nullptr) {
+		Air = new Material();
+	}
+	return Air;
+}
 
 // Apply the phong model to this point on the surface of the object, returning
 // the color of that point.
@@ -22,7 +31,7 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 	vec3f N = i.N;
 	vec3f V = r.getDirection();
 	vec3f P = r.at(i.t);
-	vec3f pointColor = ke + prod(scene->m_ambient, ka);
+	vec3f pointColor = ke + prod(prod(scene->m_ambient, ka), vec3f({ 1,1,1 }) - kt);
 	//std::cout << scene->m_ambient[0]*100 << std::endl;
 	typedef list<Light*>::const_iterator iter;
 	iter j;

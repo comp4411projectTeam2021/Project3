@@ -20,7 +20,7 @@ using namespace std;
 class Light;
 class Scene;
 
-const float EPSILONS = 0.000000000001f;
+const double EPSILONS = 0.000000001;
 
 
 class SceneElement
