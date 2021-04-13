@@ -107,7 +107,7 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 			vec3f v = scene->getCamera()->v;
 			vec3f look = scene->getCamera()->look;
 			unsigned char* pixel = backgroundPixel(u, v, look, r);
-			return vec3f((float)pixel[0] / float(255), (float)pixel[1] / 255.0f, (float)pixel[2] / 255.0f).clamp();
+			return vec3f((float)pixel[0] / 255.0f, (float)pixel[1] / 255.0f, (float)pixel[2] / 255.0f).clamp();
 		}
 
 		return vec3f( 0.0, 0.0, 0.0 );

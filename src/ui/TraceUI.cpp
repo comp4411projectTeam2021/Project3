@@ -70,6 +70,25 @@ void TraceUI::cb_load_background(Fl_Menu_* o, void* v)
 	}
 }
 
+void TraceUI::cb_load_texture(Fl_Menu_* o, void* v)
+{
+	TraceUI* pUI = whoami(o);
+
+	char* newfile = fl_file_chooser("Open texture?", "*.bmp", NULL);
+	if (newfile != NULL)
+	{
+		int width, height;
+		unsigned char* data = readBMP(newfile, width, height);
+		if (data != NULL)
+			pUI->m_textureData = data;
+		else
+			fl_alert("Texture loading error!");
+
+		pUI->texture_height = height;
+		pUI->texture_width = width;
+	}
+}
+
 void TraceUI::cb_exit(Fl_Menu_* o, void* v)
 {
 	TraceUI* pUI=whoami(o);
@@ -151,6 +170,11 @@ void TraceUI::cb_background(Fl_Widget* o, void* v)
 	((TraceUI*)(o->user_data()))->m_background = int(((Fl_Slider*)o)->value());
 }
 
+void TraceUI::cb_texture(Fl_Widget* o, void* v)
+{
+	((TraceUI*)(o->user_data()))->m_texture = int(((Fl_Slider*)o)->value());
+}
+
 
 void TraceUI::cb_render(Fl_Widget* o, void* v)
 {
@@ -170,11 +194,16 @@ void TraceUI::cb_render(Fl_Widget* o, void* v)
 		pUI->raytracer->bmp_width = pUI->bmp_height;
 		pUI->raytracer->m_backgroundData = pUI->m_backgroundData;
 
+		pUI->raytracer->getScene()->texture_width = pUI->texture_width;
+		pUI->raytracer->getScene()->texture_height = pUI->texture_height;
+		pUI->raytracer->getScene()->m_textureData = pUI->m_textureData;
+
 		pUI->raytracer->getScene()->m_attConstant = pUI->m_attConstant;
 		pUI->raytracer->getScene()->m_attLinear = pUI->m_attLinear;
 		pUI->raytracer->getScene()->m_attQuatric = pUI->m_attQuatric;
 		pUI->raytracer->getScene()->m_supersampling = pUI->m_supersampling;
 		pUI->raytracer->getScene()->m_background = pUI->m_background;
+		pUI->raytracer->getScene()->m_texture = pUI->m_texture;
 		pUI->raytracer->getScene()->m_ambient = vec3f(pUI->m_ambient, pUI->m_ambient, pUI->m_ambient);
 		pUI->raytracer->getScene()->m_threshold = vec3f(pUI->m_threshold, pUI->m_threshold, pUI->m_threshold);
 		
@@ -272,6 +301,7 @@ Fl_Menu_Item TraceUI::menuitems[] = {
 		{ "&Load Scene...",	FL_ALT + 'l', (Fl_Callback *)TraceUI::cb_load_scene },
 		{ "&Save Image...",	FL_ALT + 's', (Fl_Callback *)TraceUI::cb_save_image },
 		{ "&Load Background...",	FL_ALT + 'b', (Fl_Callback*)TraceUI::cb_load_background },
+		{ "&Load Texture...",	FL_ALT + 't', (Fl_Callback*)TraceUI::cb_load_texture },
 		{ "&Exit",			FL_ALT + 'e', (Fl_Callback *)TraceUI::cb_exit },
 		{ 0 },
 
@@ -413,6 +443,18 @@ TraceUI::TraceUI() {
 		m_background_->value(0);
 		m_background_->align(FL_ALIGN_RIGHT);
 		m_background_->callback(cb_background);
+
+		m_texture_ = new Fl_Value_Slider(10, 280, 180, 20, "Texture");
+		m_texture_->user_data((void*)(this));	// record self to be used by static callback functions
+		m_texture_->type(FL_HOR_NICE_SLIDER);
+		m_texture_->labelfont(FL_COURIER);
+		m_texture_->labelsize(12);
+		m_texture_->minimum(0);
+		m_texture_->maximum(1);
+		m_texture_->step(1);
+		m_texture_->value(0);
+		m_texture_->align(FL_ALIGN_RIGHT);
+		m_texture_->callback(cb_texture);
 
 		m_renderButton = new Fl_Button(240, 27, 70, 25, "&Render");
 		m_renderButton->user_data((void*)(this));

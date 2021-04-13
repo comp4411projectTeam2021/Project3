@@ -37,6 +37,7 @@ public:
 	Fl_Slider* m_supersampling_;
 	Fl_Slider* m_jittering_;
 	Fl_Slider* m_background_;
+	Fl_Slider* m_texture_;
 
 	Fl_Button*			m_renderButton;
 	Fl_Button*			m_stopButton;
@@ -53,9 +54,12 @@ public:
 
 	int bmp_width = 0;
 	int bmp_height = 0;
+	int texture_width = 0;
+	int texture_height = 0;
 	int m_supersampling = 1;
 	int m_jittering = 0;
 	int m_background = 0;
+	int m_texture = 0;
 
 	double m_attConstant;
 	double m_attLinear;
@@ -64,6 +68,7 @@ public:
 	double m_threshold;
 
 	unsigned char* m_backgroundData;
+	unsigned char* m_textureData;
 	
 
 private:
@@ -81,6 +86,7 @@ private:
 	static void cb_load_scene(Fl_Menu_* o, void* v);
 	static void cb_save_image(Fl_Menu_* o, void* v);
 	static void cb_load_background(Fl_Menu_* o, void* v);
+	static void cb_load_texture(Fl_Menu_* o, void* v);
 	static void cb_exit(Fl_Menu_* o, void* v);
 	static void cb_about(Fl_Menu_* o, void* v);
 
@@ -96,6 +102,7 @@ private:
 	static void cb_supersampling(Fl_Widget* o, void* v);
 	static void cb_jittering(Fl_Widget* o, void* v);
 	static void cb_background(Fl_Widget* o, void* v);
+	static void cb_texture(Fl_Widget* o, void* v);
 
 	static void cb_render(Fl_Widget* o, void* v);
 	static void cb_stop(Fl_Widget* o, void* v);

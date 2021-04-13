@@ -252,10 +252,13 @@ public:
 
     TransformRoot transformRoot;
 
-	
+	unsigned char* m_textureData;
+	int texture_width = 0;
+	int texture_height = 0;
 	int m_supersampling = 1;
 	int m_jittering = 0;
 	int m_background = 0;
+	int m_texture = 0;
 	double m_attConstant;
 	double m_attLinear;
 	double m_attQuatric;
