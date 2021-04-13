@@ -94,10 +94,10 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 				if (isnan(cosRef) ){//Total reflection, do nothing
 					//printf("Total ref");
 					//double test = sqrt(-(1 - pow(ind, 2) * (1 - pow(cosIn, 2))));
-					//if (-(1 - pow(ind, 2) * (1 - pow(cosIn, 2))) <= EPSILONS) {// 
-					//	cosRef = 0;
-					//	goto canRef;
-					//}
+					if (-(1 - pow(ind, 2) * (1 - pow(cosIn, 2))) <= EPSILONS) {// handle epsilons, probabaly never happend
+						cosRef = 0;
+						goto canRef;
+					}
 				}
 				else {
 canRef:
