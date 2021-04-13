@@ -122,9 +122,6 @@
     <ClInclude Include="src\ui\TraceGLWindow.h">
       <Filter>Header Files\ui.</Filter>
     </ClInclude>
-    <ClInclude Include="src\ui\TraceUI.h">
-      <Filter>Header Files\ui.</Filter>
-    </ClInclude>
     <ClInclude Include="src\fileio\bitmap.h">
       <Filter>Header Files\fileio.</Filter>
     </ClInclude>
@@ -169,6 +166,9 @@
     </ClInclude>
     <ClInclude Include="src\SceneObjects\trimesh.h">
       <Filter>Header Files\SceneObjects.</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\TraceUI.h">
+      <Filter>Header Files\ui.</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
