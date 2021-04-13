@@ -26,10 +26,14 @@ public:
 	void traceSetup( int w, int h );
 	void traceLines( int start = 0, int stop = 10000000 );
 	void tracePixel( int i, int j );
+	unsigned char* backgroundPixel(const vec3f& u, const vec3f& v, const vec3f& look, const ray& r);
 
 	bool loadScene( char* fn );
 
 	bool sceneLoaded();
+
+	int bmp_width, bmp_height;
+	unsigned char* m_backgroundData = nullptr;
 
 private:
 	unsigned char *buffer;
