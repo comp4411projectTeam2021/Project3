@@ -53,4 +53,16 @@ protected:
 	
 };
 
+class SpotLight :public PointLight
+{
+public:
+	SpotLight(Scene* scene, const vec3f& pos, const vec3f& color, const vec3f& direction, const vec3f& edgeplace):
+		PointLight(scene, pos, color), direction(direction.normalize()), edgeplace(edgeplace) {} 
+	virtual vec3f getColor(const vec3f& P) const;
+
+	vec3f direction;
+	vec3f edgeplace;
+};
+
+
 #endif // __LIGHT_H__

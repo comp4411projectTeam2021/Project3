@@ -1,6 +1,9 @@
 #include <cmath>
 
 #include "light.h"
+#include <iostream>
+
+#define PI 3.14159265
 
 double DirectionalLight::distanceAttenuation( const vec3f& P ) const
 {
@@ -60,3 +63,13 @@ vec3f PointLight::shadowAttenuation(const vec3f& P) const
 	isect i;
 	return scene->intersect(ray(P, getDirection(P)), i) ? prod(getColor(P), i.getMaterial().kt) : getColor(P);
 }
+
+vec3f SpotLight::getColor(const vec3f& P) const
+{
+	//std::cout << acos(direction * (P-position).normalize()) << std::endl;
+	if (acos(direction * (P - position).normalize()) < edgeplace[0] * double(PI / 180))
+		return color;
+	else
+		return vec3f(0, 0, 0);
+}
+

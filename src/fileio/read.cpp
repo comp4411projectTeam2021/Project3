@@ -546,6 +546,25 @@ static void processObject( Obj *obj, Scene *scene, mmap& materials )
 			newLight->quadratic_attenuation_coeff = getField(child, "quadratic_attenuation_coeff")->getScalar();
 		scene->add(newLight);
 	} 
+	else if (name == "spot_light")
+	{
+		if (child == NULL) {
+			throw ParseError("No info for spot_light");
+		}
+		SpotLight* newLight = new SpotLight(scene,
+			tupleToVec(getField(child, "position")),
+			tupleToVec(getColorField(child)), 
+			tupleToVec(getField(child, "direction")), 
+			tupleToVec(getField(child, "edgeplace")));
+
+		if (hasField(child, "constant_attenuation_coeff"))
+			newLight->constant_attenuation_coeff = getField(child, "constant_attenuation_coeff")->getScalar();
+		if (hasField(child, "linear_attenuation_coeff"))
+			newLight->linear_attenuation_coeff = getField(child, "linear_attenuation_coeff")->getScalar();
+		if (hasField(child, "quadratic_attenuation_coeff"))
+			newLight->quadratic_attenuation_coeff = getField(child, "quadratic_attenuation_coeff")->getScalar();
+		scene->add(newLight);
+	}
 	else if(name=="ambient_light")
 	{
 		if (child == NULL) {
