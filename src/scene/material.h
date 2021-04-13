@@ -16,6 +16,10 @@ class isect;
 class Material
 {
 public:
+
+
+    static Material* getAir();
+
     Material()
         : ke( vec3f( 0.0, 0.0, 0.0 ) )
         , ka( vec3f( 0.0, 0.0, 0.0 ) )

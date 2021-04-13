@@ -22,13 +22,15 @@ vec3f RayTracer::trace( Scene *scene, double x, double y )
 {
     ray r( vec3f(0,0,0), vec3f(0,0,0) );
     scene->getCamera()->rayThrough( x,y,r );
-	return traceRay( scene, r, scene->m_threshold, 0 ).clamp();
+	std::stack<Material*> materials;
+	materials.push(Material::getAir());
+	return traceRay( scene, r, scene->m_threshold, 0 , materials).clamp();
 }
 
 // Do recursive ray tracing!  You'll want to insert a lot of code here
 // (or places called from here) to handle reflection, refraction, etc etc.
 vec3f RayTracer::traceRay( Scene *scene, const ray& r, 
-	const vec3f& thresh, int depth,float index)
+	const vec3f& thresh, int depth, std::stack<Material*> materials)
 {
 	isect i;
 
@@ -44,6 +46,7 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 		// more steps: add in the contributions from reflected and refracted
 		// rays.
 		const Material& m = i.getMaterial();
+		
 		if (depth > 0) {
 			printf("");
 		}
@@ -53,7 +56,7 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 			vec3f in = (r.at(i.t) - r.getPosition()).normalize();
 			i.N = i.N.normalize();
 			ray reflectionRay(r.at(i.t) , (in - 2*(in.dot(i.N))*i.N).normalize());
-			reflection = traceRay(scene, reflectionRay, thresh, depth+1).clamp();
+			reflection = traceRay(scene, reflectionRay, thresh, depth+1, materials).clamp();
 
 			if (m.kt[0] != 0 || m.kt[1] != 0 || m.kt[2] != 0) {// Obj is not completely solid
 				//double inAngle = acos(i.N * in) * 180.0 / PI;
@@ -65,30 +68,46 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 				//}
 				//refAngle = acos(sqrt(1 - (pow((index == 1 ? 1 : m.index), 2) / pow((index == 1 ? 1 : m.index), 2) * (1 - pow(cos(inAngle), 2))))) * 180.0 / PI;
 				//vec3f refOut = -abs(cos(refAngle)) * i.N + abs(sin(refAngle) / sin(inAngle)) * (in + abs(cos(inAngle)) * i.N);
-
-				double ind = (index == 1 ? 1 / m.index : m.index);
-				double cosIn = -in*i.N ;
-				if (cosIn < 0) {
-					//cosIn = in * i.N;
-				}
-				double cosRef = sqrt(1 - pow(ind, 2) * (1 - pow(cosIn, 2)));
-
-				double inAngle = acos(cosIn) * 180.0 / PI;
-
-				double refAngle = acos(cosRef) * 180.0 / PI;
-
-				if (isnan(cosRef) ){
-					//printf("Total ref");
+				double ind = 1;
+				vec3f normalDir;
+				if (materials.top() == &m) {
+					materials.pop();
+					ind = m.index/ (materials.top())->index;
+					normalDir = -i.N;
 				}
 				else {
-					vec3f refOut = (-abs(cosRef) * i.N + abs(ind) * (in + abs(cosIn) * i.N)).normalize();
-					vec3f testOut = refraction2(in, i.N, (index == 1 ? 1 : m.index), (index == 1 ? m.index:1 ));
-					double dis = acos(testOut * refOut) * 180.0 / PI;
-					if (dis > 0.1) {
-						printf("diff");
+					ind = (materials.top())->index / m.index;
+					materials.push((Material*)&m);
+					normalDir = i.N;
+				}
+
+				double cosIn = -in* normalDir;
+				//if (cosIn < 0) {
+				//	//cosIn = in * i.N;
+				//}
+				double cosRef = sqrt(1 - pow(ind, 2) * (1 - pow(cosIn, 2)));
+
+				//double inAngle = acos(cosIn) * 180.0 / PI;
+
+				//double refAngle = acos(cosRef) * 180.0 / PI;
+
+				if (isnan(cosRef) ){//Total reflection, do nothing
+					//printf("Total ref");
+					//double test = sqrt(-(1 - pow(ind, 2) * (1 - pow(cosIn, 2))));
+					if (-(1 - pow(ind, 2) * (1 - pow(cosIn, 2))) <= EPSILONS) {// handle epsilons, probabaly never happend
+						cosRef = 0;
+						goto canRef;
 					}
+				}
+				else {
+canRef:
+					vec3f refOut = (-abs(cosRef) * normalDir + abs(ind) * (in + abs(cosIn) * normalDir)).normalize();
+					//double dis = acos(testOut * refOut) * 180.0 / PI;
+					//if (dis > 0.1) {
+					//	//printf("diff");
+					//}
 					ray refractionRay(r.at(i.t), refOut);
-					refraction = traceRay(scene, refractionRay, thresh, depth + 1, (index == 1 ? m.index : 1)).clamp();
+					refraction = traceRay(scene, refractionRay, thresh, depth + 1, materials).clamp();
 				}
 
 

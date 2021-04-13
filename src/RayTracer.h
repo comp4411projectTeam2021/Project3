@@ -5,6 +5,7 @@
 
 #include "scene/scene.h"
 #include "scene/ray.h"
+#include <stack>
 
 class RayTracer
 {
@@ -14,7 +15,7 @@ public:
 	void* UI;
 
     vec3f trace( Scene *scene, double x, double y );
-	vec3f traceRay( Scene *scene, const ray& r, const vec3f& thresh, int depth ,float index = 1);
+	vec3f traceRay( Scene *scene, const ray& r, const vec3f& thresh, int depth , std::stack<Material*> materials);
 
 	vec3f refraction2(vec3f i, vec3f n, double n1, double n2);
 
