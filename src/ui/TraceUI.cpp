@@ -175,6 +175,9 @@ void TraceUI::cb_texture(Fl_Widget* o, void* v)
 	((TraceUI*)(o->user_data()))->m_texture = int(((Fl_Slider*)o)->value());
 }
 
+void TraceUI::cb_glossy(Fl_Widget* o, void* v) {
+	((TraceUI*)(o->user_data()))->m_Glossy = bool(((Fl_Check_Button*)o)->value());
+}
 
 void TraceUI::cb_render(Fl_Widget* o, void* v)
 {
@@ -455,6 +458,12 @@ TraceUI::TraceUI() {
 		m_texture_->value(0);
 		m_texture_->align(FL_ALIGN_RIGHT);
 		m_texture_->callback(cb_texture);
+
+		m_glossyButton = new Fl_Check_Button(10, 310, 70, 25, "&glossy ");
+		m_glossyButton->value(m_Glossy);
+		m_glossyButton->callback(cb_glossy);
+		m_glossyButton->user_data((void*)(this));
+		//m_glossyButton->callback(cb_render);
 
 		m_renderButton = new Fl_Button(240, 27, 70, 25, "&Render");
 		m_renderButton->user_data((void*)(this));

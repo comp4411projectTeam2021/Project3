@@ -4,4 +4,4 @@
 [1] spot lights (../bonus/spotlight.ray)
 [1] background image (../bonus/testBackground.ray)
 [1] overlapping objects (../bonus/refra_overlapping.ray)
-
+[2] Glossy Reflection && Refraction	(../bonus/glossyReflection.ray and ../simpleSamples/sphere_refract.ray)
