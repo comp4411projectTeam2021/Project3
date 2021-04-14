@@ -39,6 +39,9 @@ public:
 	Fl_Slider* m_background_;
 	Fl_Slider* m_texture_;
 
+	Fl_Check_Button * m_glossyButton;
+
+
 	Fl_Button*			m_renderButton;
 	Fl_Button*			m_stopButton;
 
@@ -70,6 +73,8 @@ public:
 	unsigned char* m_backgroundData;
 	unsigned char* m_textureData;
 	
+	bool		m_Glossy = false;
+
 
 private:
 	RayTracer*	raytracer;
@@ -103,6 +108,8 @@ private:
 	static void cb_jittering(Fl_Widget* o, void* v);
 	static void cb_background(Fl_Widget* o, void* v);
 	static void cb_texture(Fl_Widget* o, void* v);
+
+	static void cb_glossy(Fl_Widget* o, void* v);
 
 	static void cb_render(Fl_Widget* o, void* v);
 	static void cb_stop(Fl_Widget* o, void* v);

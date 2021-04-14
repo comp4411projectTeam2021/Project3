@@ -10,9 +10,14 @@
 #include "fileio/parse.h"
 #include "ui/TraceUI.h"
 #include <iostream>
+#include <random>
 
 #define PI 3.14159265
 
+default_random_engine e;
+
+uniform_real_distribution<float> random(-0.1, 0.1);
+normal_distribution<float> random2(0,0.05);
 
 // Trace a top-level ray through normalized window coordinates (x,y)
 // through the projection plane, and out into the scene.  All we do is
@@ -20,6 +25,7 @@
 // in an initial ray weight of (0.0,0.0,0.0) and an initial recursion depth of 0.
 vec3f RayTracer::trace( Scene *scene, double x, double y )
 {
+	e.seed(time(0)*x/y);
     ray r( vec3f(0,0,0), vec3f(0,0,0) );
     scene->getCamera()->rayThrough( x,y,r );
 	std::stack<Material*> materials;
@@ -34,6 +40,9 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 {
 	isect i;
 
+	int glossyLoop = ((TraceUI*)UI)->m_Glossy?25:1;
+	
+
 	if( scene->intersect( r, i ) ) {
 		// YOUR CODE HERE
 
@@ -46,7 +55,9 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 		// more steps: add in the contributions from reflected and refracted
 		// rays.
 		const Material& m = i.getMaterial();
-		
+
+
+
 		if (depth > 0) {
 			printf("");
 		}
@@ -56,7 +67,20 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 			vec3f in = (r.at(i.t) - r.getPosition()).normalize();
 			i.N = i.N.normalize();
 			ray reflectionRay(r.at(i.t) , (in - 2*(in.dot(i.N))*i.N).normalize());
-			reflection = traceRay(scene, reflectionRay, thresh, depth+1, materials).clamp();
+
+			reflection = 1.0/glossyLoop * traceRay(scene, reflectionRay, thresh, depth+1, materials).clamp();
+			for (int j = 0; j < glossyLoop-1; j++) {
+				vec3f ranDir = reflectionRay.getDirection() - reflectionRay.getPosition();
+				vec3f vertComp = ranDir * sin(acos(in.dot(i.N)))*random(e);
+				ranDir = (in - 2 * (in.dot(i.N)) * i.N).normalize();
+
+				ranDir[0] += random(e);
+				ranDir[1] += random(e);
+				ranDir[2] += random(e);
+
+				ray glossyRay(reflectionRay.getPosition(), ranDir.normalize());
+				reflection += 1.0 / glossyLoop * traceRay(scene, glossyRay, thresh, depth + 1, materials).clamp();
+			}
 
 			if (m.kt[0] != 0 || m.kt[1] != 0 || m.kt[2] != 0) {// Obj is not completely solid
 				//double inAngle = acos(i.N * in) * 180.0 / PI;
@@ -107,7 +131,17 @@ canRef:
 					//	//printf("diff");
 					//}
 					ray refractionRay(r.at(i.t), refOut);
-					refraction = traceRay(scene, refractionRay, thresh, depth + 1, materials).clamp();
+					refraction = 1.0 / glossyLoop * traceRay(scene, refractionRay, thresh, depth + 1, materials).clamp();
+
+					for (int j = 0; j < glossyLoop - 1; j++) {
+						vec3f ranDir = refOut;
+						ranDir[0] += random2(e);
+						ranDir[1] += random2(e);
+						ranDir[2] += random2(e);
+
+						ray glossyRay(reflectionRay.getPosition(), (ranDir).normalize());
+						refraction += 1.0 / glossyLoop * traceRay(scene, glossyRay, thresh, depth + 1, materials).clamp();
+					}
 				}
 
 
@@ -134,44 +168,7 @@ canRef:
 }
 
 //debug use ONLY
-vec3f RayTracer::refraction2(vec3f i, vec3f n, double n1, double n2)
-{
-	if (abs(abs(n * i) - 1) < RAY_EPSILON)
-		return i;
 
-	double sinTheta1 = sqrt(1 - pow(n * i, 2));
-	double sinTheta2 = (n1 * sinTheta1) / n2;
-	double theta1 = asin(sinTheta1);
-	double theta2 = asin(sinTheta2);
-	double sinTheta3 = sin(abs(theta1 - theta2));
-
-	if (n1 == n2)
-	{
-		return i;
-	}
-	else if (n1 > n2)
-	{
-		double critical = n2 / n1;
-
-		if (critical - sinTheta1 > RAY_EPSILON)
-		{
-			double sinAlpha = sin(3.1416 - theta2);
-			double fac = sinAlpha / sinTheta3;
-
-			return -(-i * fac + (-n)).normalize();
-		}
-		else
-		{
-			//TIR
-			return vec3f(0.0, 0.0, 0.0);
-		}
-	}
-	else
-	{
-		double fac = sinTheta2 / sinTheta3;
-		return (i * fac + (-n)).normalize();
-	}
-}
 
 RayTracer::RayTracer()
 {
