@@ -11,6 +11,7 @@
 #include "ui/TraceUI.h"
 #include <iostream>
 #include <random>
+#include <time.h>
 
 #define PI 3.14159265
 

@@ -41,14 +41,14 @@ bool Square::intersectLocal( const ray& r, isect& i ) const
 bool Square::getObjUV(const ray& r, vec3f& u, vec3f& v) const
 {
 	//std::cout << "aaa" << std::endl;
-	vec3f p = transform->globalToLocalCoords(r.getPosition());
-	vec3f d = transform->globalToLocalCoords(r.getDirection() - r.getPosition()) - p;
+	vec3f rP = r.getPosition();vec3f rD = r.getDirection();
+	vec3f p = transform->globalToLocalCoords(rP);
+	vec3f d = -p + transform->globalToLocalCoords(-rP + rD);
 	d /= d.length();
-	ray objRay(p, d);
 	isect i;
-	if (intersectLocal(objRay, i))
+	if (intersectLocal(ray(p,d), i))
 	{
-		vec3f P = objRay.at(i.t);
+		vec3f P = p + i.t * d;
 		u = vec3f(P[0] + 0.5, 0, 1).clamp();
 		v = vec3f(P[1] + 0.5, 0, 1).clamp();
 		return true;
