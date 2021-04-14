@@ -284,7 +284,7 @@ void RayTracer::tracePixel( int i, int j )
 				y + ((double)rand() / RAND_MAX - 0.5) / double(buffer_height));
 	else
 	{
-		vec3f sum=vec3f(0,0,0);
+		vec3f sum = vec3f(0, 0, 0);
 		int numSup = getScene()->m_supersampling;
 		double numSupD = double(getScene()->m_supersampling) - 1;
 		double X = (double(i) - 0.5) / double(buffer_width);

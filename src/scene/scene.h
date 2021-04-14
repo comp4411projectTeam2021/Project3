@@ -215,6 +215,7 @@ class SceneObject
 public:
 	virtual const Material& getMaterial() const = 0;
 	virtual void setMaterial( Material *m ) = 0;
+	virtual bool getObjUV(const ray& r,vec3f& u, vec3f& v) const{ return false; }
 
 protected:
 	SceneObject( Scene *scene )
@@ -231,6 +232,7 @@ public:
 
 	virtual const Material& getMaterial() const { return *material; }
 	virtual void setMaterial( Material *m )	{ material = m; }
+	virtual bool getObjUV(const ray& r,  vec3f& u, vec3f& v) const { return false; }
 
 protected:
 	MaterialSceneObject( Scene *scene, Material *mat ) 
@@ -252,7 +254,7 @@ public:
 
     TransformRoot transformRoot;
 
-	unsigned char* m_textureData;
+	unsigned char* m_textureData = nullptr;
 	int texture_width = 0;
 	int texture_height = 0;
 	int m_supersampling = 1;
