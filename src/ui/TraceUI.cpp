@@ -176,6 +176,16 @@ void TraceUI::cb_texture(Fl_Widget* o, void* v)
 	((TraceUI*)(o->user_data()))->m_texture = int(((Fl_Slider*)o)->value());
 }
 
+void TraceUI::cb_adapt(Fl_Widget* o, void* v)
+{
+	((TraceUI*)(o->user_data()))->m_adapt = int(((Fl_Slider*)o)->value());
+}
+
+void TraceUI::cb_adaptDiff(Fl_Widget* o, void* v)
+{
+	((TraceUI*)(o->user_data()))->m_adaptDiff = double(((Fl_Slider*)o)->value());
+}
+
 void TraceUI::cb_glossy(Fl_Widget* o, void* v) {
 	((TraceUI*)(o->user_data()))->m_Glossy = bool(((Fl_Check_Button*)o)->value());
 }
@@ -194,6 +204,7 @@ void TraceUI::cb_render(Fl_Widget* o, void* v)
 		pUI->m_traceGlWindow->show();
 
 		pUI->raytracer->traceSetup(width, height);
+
 		pUI->raytracer->bmp_height = pUI->bmp_height;
 		pUI->raytracer->bmp_width = pUI->bmp_height;
 		pUI->raytracer->m_backgroundData = pUI->m_backgroundData;
@@ -202,12 +213,15 @@ void TraceUI::cb_render(Fl_Widget* o, void* v)
 		pUI->raytracer->getScene()->texture_height = pUI->texture_height;
 		pUI->raytracer->getScene()->m_textureData = pUI->m_textureData;
 
+		pUI->raytracer->getScene()->m_nDepth = pUI->m_nDepth;
 		pUI->raytracer->getScene()->m_attConstant = pUI->m_attConstant;
 		pUI->raytracer->getScene()->m_attLinear = pUI->m_attLinear;
 		pUI->raytracer->getScene()->m_attQuatric = pUI->m_attQuatric;
 		pUI->raytracer->getScene()->m_supersampling = pUI->m_supersampling;
 		pUI->raytracer->getScene()->m_background = pUI->m_background;
 		pUI->raytracer->getScene()->m_texture = pUI->m_texture;
+		pUI->raytracer->getScene()->m_adapt = pUI->m_adapt;
+		pUI->raytracer->getScene()->m_adaptDiff = pUI->m_adaptDiff;
 		pUI->raytracer->getScene()->m_ambient = vec3f(pUI->m_ambient, pUI->m_ambient, pUI->m_ambient);
 		pUI->raytracer->getScene()->m_threshold = vec3f(pUI->m_threshold, pUI->m_threshold, pUI->m_threshold);
 		
@@ -460,7 +474,31 @@ TraceUI::TraceUI() {
 		m_texture_->align(FL_ALIGN_RIGHT);
 		m_texture_->callback(cb_texture);
 
-		m_glossyButton = new Fl_Check_Button(10, 310, 70, 25, "&glossy ");
+		m_adapt_ = new Fl_Value_Slider(10, 305, 180, 20, "Adapt Supper");
+		m_adapt_->user_data((void*)(this));	// record self to be used by static callback functions
+		m_adapt_->type(FL_HOR_NICE_SLIDER);
+		m_adapt_->labelfont(FL_COURIER);
+		m_adapt_->labelsize(12);
+		m_adapt_->minimum(0);
+		m_adapt_->maximum(1);
+		m_adapt_->step(1);
+		m_adapt_->value(0);
+		m_adapt_->align(FL_ALIGN_RIGHT);
+		m_adapt_->callback(cb_adapt);
+
+		m_adaptDiff_ = new Fl_Value_Slider(10, 330, 180, 20, "Adapt Supper Diff");
+		m_adaptDiff_->user_data((void*)(this));	// record self to be used by static callback functions
+		m_adaptDiff_->type(FL_HOR_NICE_SLIDER);
+		m_adaptDiff_->labelfont(FL_COURIER);
+		m_adaptDiff_->labelsize(12);
+		m_adaptDiff_->minimum(0.01);
+		m_adaptDiff_->maximum(10);
+		m_adaptDiff_->step(0.01);
+		m_adaptDiff_->value(0.5);
+		m_adaptDiff_->align(FL_ALIGN_RIGHT);
+		m_adaptDiff_->callback(cb_adaptDiff);
+
+		m_glossyButton = new Fl_Check_Button(10, 355, 70, 25, "&glossy ");
 		m_glossyButton->value(m_Glossy);
 		m_glossyButton->callback(cb_glossy);
 		m_glossyButton->user_data((void*)(this));

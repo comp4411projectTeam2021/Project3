@@ -27,6 +27,7 @@ public:
 	void traceLines( int start = 0, int stop = 10000000 );
 	void tracePixel( int i, int j );
 	unsigned char* backgroundPixel(const vec3f& u, const vec3f& v, const vec3f& look, const ray& r);
+	vec3f adaptSupper(const double X, const double Y, const double deltaX, const double deltaY, int depth);
 
 	bool loadScene( char* fn );
 
