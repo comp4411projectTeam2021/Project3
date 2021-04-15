@@ -149,7 +149,7 @@ canRef:
 			}
 			
 		}		
-		return m.shade(scene, r, i)  + prod(m.kr , reflection) + prod(m.kt, refraction);
+		return m.shade(scene, r, i,UI)  + prod(m.kr , reflection) + prod(m.kt, refraction);
 	
 	} else {
 		// No intersection.  This ray travels to infinity, so we color

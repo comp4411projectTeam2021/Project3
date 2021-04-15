@@ -6,3 +6,4 @@
 [1] overlapping objects (../bonus/refra_overlapping.ray)
 [1.5] texture mapping (../bonus/testTexture.ray)
 [2] Glossy Reflection && Refraction	(../bonus/glossyReflection.ray and ../simpleSamples/sphere_refract.ray)
+[1.5] Soft Shadow
