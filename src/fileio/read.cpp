@@ -565,6 +565,26 @@ static void processObject( Obj *obj, Scene *scene, mmap& materials )
 			newLight->quadratic_attenuation_coeff = getField(child, "quadratic_attenuation_coeff")->getScalar();
 		scene->add(newLight);
 	}
+	else if (name == "warn_light") 
+	{
+		if (child == NULL) {
+			throw ParseError("No info for warn_light");
+		}
+		WarnLight* newLight = new WarnLight(scene,
+			tupleToVec(getField(child, "position")),
+			tupleToVec(getColorField(child)),
+			tupleToVec(getField(child, "type")),
+			tupleToVec(getField(child, "radius")),
+			tupleToVec(getField(child, "direction")));
+
+		if (hasField(child, "constant_attenuation_coeff"))
+			newLight->constant_attenuation_coeff = getField(child, "constant_attenuation_coeff")->getScalar();
+		if (hasField(child, "linear_attenuation_coeff"))
+			newLight->linear_attenuation_coeff = getField(child, "linear_attenuation_coeff")->getScalar();
+		if (hasField(child, "quadratic_attenuation_coeff"))
+			newLight->quadratic_attenuation_coeff = getField(child, "quadratic_attenuation_coeff")->getScalar();
+		scene->add(newLight);
+	}
 	else if(name=="ambient_light")
 	{
 		if (child == NULL) {

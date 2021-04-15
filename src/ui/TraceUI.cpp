@@ -492,7 +492,7 @@ TraceUI::TraceUI() {
 		m_adaptDiff_->labelfont(FL_COURIER);
 		m_adaptDiff_->labelsize(12);
 		m_adaptDiff_->minimum(0.01);
-		m_adaptDiff_->maximum(10);
+		m_adaptDiff_->maximum(1);
 		m_adaptDiff_->step(0.01);
 		m_adaptDiff_->value(0.5);
 		m_adaptDiff_->align(FL_ALIGN_RIGHT);

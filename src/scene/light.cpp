@@ -67,9 +67,46 @@ vec3f PointLight::shadowAttenuation(const vec3f& P) const
 vec3f SpotLight::getColor(const vec3f& P) const
 {
 	//std::cout << acos(direction * (P-position).normalize()) << std::endl;
-	if (acos(direction * (P - position).normalize()) < edgeplace[0] * double(PI / 180))
+	if (acos(direction * (P - position).normalize()) < edgeplace[0] * (PI / 180.0))
 		return color;
 	else
 		return vec3f(0, 0, 0);
 }
 
+vec3f WarnLight::getColor(const vec3f& P) const
+{
+	double R = radius[0];
+	vec3f pointPosition = vec3f(P[0] - position[0], P[1] - position[1], 0);
+	double pointDistance = pointPosition.length();
+	double limitDistrance;
+	double thetaX = sin(direction[0] * (PI / 180.0));
+	double thetaY = cos(direction[0] * (PI / 180.0));
+	double theta = acos(vec3f(thetaX, thetaY, 0) * pointPosition.normalize());
+	if (type[0] - 1 < 0.000001)
+		//std::cout << position[0] << ' ' << position[1] << ' ' << position[2] << std::endl; std::cout << P[0] << ' ' << P[1] << ' ' << P[2] << std::endl;
+		if (theta < 2.0 * PI / 3.0)
+			limitDistrance = sin(PI / 6.0) * R / sin(PI - PI / 6.0 - theta);
+		else
+		{
+			theta = acos(vec3f(-thetaX, -thetaY, 0) * pointPosition.normalize());
+			limitDistrance = sin(PI / 6.0) * R / sin(PI / 2.0 - theta);
+		}
+	else if (type[0] - 2 < 0.000001)
+		if (theta < PI / 2.0)
+			limitDistrance = sin(PI / 4.0) * R / sin(PI - PI / 4.0 - theta);
+		else
+		{
+			theta = acos(vec3f(-thetaX, -thetaY, 0) * pointPosition.normalize());
+			limitDistrance = sin(PI / 4.0) * R / sin(PI / 4.0 + theta);
+		}
+	else if (type[0] - 3 < 0.000001)
+	{
+		if (theta < PI / 3.0);
+		else if (theta < 2.0 * PI / 3.0)theta -= PI / 3.0;
+		else theta -= 2.0 * PI / 3.0;
+		limitDistrance = sin(PI / 3.0) * R / sin(PI - PI / 3.0 - theta);
+	}
+	else limitDistrance = R;
+	if (pointDistance < limitDistrance)return color; 
+	else return vec3f(0, 0, 0);
+}

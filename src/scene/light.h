@@ -64,5 +64,17 @@ public:
 	vec3f edgeplace;
 };
 
+class WarnLight :public PointLight
+{
+public:
+	WarnLight(Scene* scene, const vec3f& pos, const vec3f& color, const vec3f& type, const vec3f& radius, const vec3f& direction) :
+		PointLight(scene, pos, color), type(type), radius(radius), direction(direction){}
+	virtual vec3f getColor(const vec3f& P) const;
+
+	vec3f type;//1 triangle; 2 square; 3 6-sides; others circle
+	vec3f radius;
+	vec3f direction;
+};
+
 
 #endif // __LIGHT_H__
