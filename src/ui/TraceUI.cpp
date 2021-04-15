@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <string.h>
+#include <iostream>
 
 #include <FL/fl_ask.h>
 
@@ -86,7 +87,7 @@ void TraceUI::cb_load_texture(Fl_Menu_* o, void* v)
 
 		pUI->texture_height = height;
 		pUI->texture_width = width;
-	}
+	}//std::cout << "aaa" << std::endl;
 }
 
 void TraceUI::cb_exit(Fl_Menu_* o, void* v)

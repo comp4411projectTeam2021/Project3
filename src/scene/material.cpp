@@ -40,9 +40,24 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 		
 		vec3f L = (*j)->getDirection(P);
 		vec3f R = (L - 2 * (N * L) * N).normalize();
-		vec3f diffuse = maximum(0, N * L) * kd;
+
+		vec3f diffuse;
+		vec3f uObj, vObj; //std::cout << i.obj->getObjUV(r,  uObj, vObj) << std::endl;
+		if (scene->m_textureData && scene->m_texture == 1 && i.obj->getObjUV(r,  uObj, vObj))
+			if (uObj[0] > 0.000001 && vObj[0] > 0.000001)
+			{
+				//std::cout << "aaa" << std::endl;
+				unsigned char* pixel = scene->m_textureData + (int(vObj[0] * scene->texture_height) * scene->texture_width + int(uObj[0] * scene->texture_width)) * 3;
+				diffuse = vec3f((float)pixel[0] / 255.0f, (float)pixel[1] / 255.0f, (float)pixel[2] / 255.0f).clamp();
+			}
+			else
+				diffuse = vec3f(1, 1, 1);
+		else
+			diffuse = maximum(0, N * L) * kd;
+
 		double theta = maximum(0, R * V);
 		vec3f specular = pow(theta, shininess * 128)*ks;
+
 		pointColor +=
 			prod
 			(
