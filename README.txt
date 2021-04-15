@@ -6,5 +6,6 @@
 [1] overlapping objects (../bonus/refra_overlapping.ray)
 [1.5] texture mapping (../bonus/testTexture.ray)
 [1.5] antialiasing by adaptive supersampling (../simpleSamples/sphere_refract.ray)
-[2] Glossy Reflection && Refraction	(../bonus/glossyReflection.ray and ../simpleSamples/sphere_refract.ray)
+[1.5] Warn model (../bonus/warnlight.ray)
 [1.5] Soft Shadow
+[2] Glossy Reflection && Refraction	(../bonus/glossyReflection.ray and ../simpleSamples/sphere_refract.ray)
