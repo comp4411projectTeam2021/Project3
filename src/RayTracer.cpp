@@ -17,7 +17,7 @@
 default_random_engine e;
 
 uniform_real_distribution<float> random(-0.1, 0.1);
-normal_distribution<float> random2(0,0.05);
+normal_distribution<float> random2(0,0.03);
 
 // Trace a top-level ray through normalized window coordinates (x,y)
 // through the projection plane, and out into the scene.  All we do is
