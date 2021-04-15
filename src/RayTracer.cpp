@@ -263,6 +263,49 @@ void RayTracer::traceLines( int start, int stop )
 			tracePixel(i,j);
 }
 
+vec3f RayTracer::adaptSupper(const double X, const double Y, const double deltaX, const double deltaY, int depth)
+{
+	if (depth < scene->m_nDepth)
+	{
+		double x[2] = { X - deltaX / 2.0, X + deltaX / 2.0 };//01 11  //1 2
+		double y[2] = { Y - deltaY / 2.0, Y + deltaY / 2.0 };//00 10  //3 4 
+		vec3f diffP[4] = { trace(scene,x[0],y[1]), trace(scene,x[1],y[1]),
+						   trace(scene,x[0],y[0]), trace(scene,x[1],y[0]) };
+		vec3f midP = trace(scene, X, Y);
+		vec3f sum = midP;
+		int count = 1;
+		/*
+		if ((diffP[0] - diffP[1]).length() + (diffP[0] - diffP[2]).length() + (diffP[0] - diffP[3]).length()
+			+ (diffP[1] - diffP[2]).length() + (diffP[1] - diffP[3]).length() + (diffP[2] - diffP[3]).length() > scene->m_adaptDiff)
+			sum = (adaptSupper(X - deltaX / 4.0, Y + deltaY / 4.0, deltaX / 2.0, deltaY / 2.0, depth + 1)
+				+ adaptSupper(X + deltaX / 4.0, Y + deltaY / 4.0, deltaX / 2.0, deltaY / 2.0, depth + 1)
+				+ adaptSupper(X - deltaX / 4.0, Y - deltaY / 4.0, deltaX / 2.0, deltaY / 2.0, depth + 1)
+				+ adaptSupper(X + deltaX / 4.0, Y - deltaY / 4.0, deltaX / 2.0, deltaY / 2.0, depth + 1)) / 4;*/
+		if ((midP - diffP[0]).length() > scene->m_adaptDiff)
+		{
+			sum += adaptSupper(X - deltaX / 4.0, Y + deltaY / 4.0, deltaX / 2.0, deltaY / 2.0, depth + 1);
+			count++;
+		}
+		if ((midP - diffP[1]).length() > scene->m_adaptDiff)
+		{
+			sum += adaptSupper(X + deltaX / 4.0, Y + deltaY / 4.0, deltaX / 2.0, deltaY / 2.0, depth + 1);
+			count++;
+		}
+		if ((midP - diffP[2]).length() > scene->m_adaptDiff)
+		{
+			sum += adaptSupper(X - deltaX / 4.0, Y - deltaY / 4.0, deltaX / 2.0, deltaY / 2.0, depth + 1);
+			count++;
+		}
+		if ((midP - diffP[3]).length() > scene->m_adaptDiff)
+		{
+			sum += adaptSupper(X + deltaX / 4.0, Y - deltaY / 4.0, deltaX / 2.0, deltaY / 2.0, depth + 1);
+			count++;
+		}
+		return sum / count;
+	}
+	else return trace(scene, X, Y);
+}
+
 void RayTracer::tracePixel( int i, int j )
 {
 	vec3f col;
@@ -272,33 +315,36 @@ void RayTracer::tracePixel( int i, int j )
 
 	double x = double(i)/double(buffer_width);
 	double y = double(j)/double(buffer_height);
-	//std::cout << scene->m_supersampling << std::endl;
-	if (scene->m_supersampling == 1)
-		if (getScene()->m_jittering == 0)
-			col = trace(scene, x, y);
+	
+	if (scene->m_adapt == 1 && scene->m_nDepth >= 2)
+		col = adaptSupper(x, y, 1.0 / double(buffer_width), 1.0 / double(buffer_height), 1);
+	else//adapt supper close, supper sample and jittering is available
+		if (scene->m_supersampling == 1)
+			if (getScene()->m_jittering == 0)
+				col = trace(scene, x, y);
+			else
+				col = trace(scene,
+					x + ((double)rand() / RAND_MAX - 0.5) / double(buffer_width),
+					y + ((double)rand() / RAND_MAX - 0.5) / double(buffer_height));
 		else
-			col = trace(scene,
-				x + ((double)rand() / RAND_MAX - 0.5) / double(buffer_width),
-				y + ((double)rand() / RAND_MAX - 0.5) / double(buffer_height));
-	else
-	{
-		vec3f sum = vec3f(0, 0, 0);
-		int numSup = getScene()->m_supersampling;
-		double numSupD = double(getScene()->m_supersampling) - 1;
-		double X = (double(i) - 0.5) / double(buffer_width);
-		double Y = (double(j) - 0.5) / double(buffer_height);
-		double deltaX = 1.0 / double(buffer_width) / numSupD;
-		double deltaY = 1.0 / double(buffer_height) / numSupD;
-		for (int m = 0; m < numSup; m++)
-			for (int n = 0; n < numSup; n++)
-				if (getScene()->m_jittering == 1)
-					sum += trace(scene,
-						X + m * deltaX + ((double)rand() / RAND_MAX - 0.5) / double(buffer_width),
-						Y + n * deltaY + ((double)rand() / RAND_MAX - 0.5) / double(buffer_height));
-				else 
-					sum += trace(scene, X + m * deltaX, Y + n * deltaY);
-		col = sum / (numSup * numSup);
-	}
+		{
+			vec3f sum = vec3f(0, 0, 0);
+			int numSup = getScene()->m_supersampling;
+			double numSupD = double(getScene()->m_supersampling) - 1;
+			double X = (double(i) - 0.5) / double(buffer_width);
+			double Y = (double(j) - 0.5) / double(buffer_height);
+			double deltaX = 1.0 / double(buffer_width) / numSupD;
+			double deltaY = 1.0 / double(buffer_height) / numSupD;
+			for (int m = 0; m < numSup; m++)
+				for (int n = 0; n < numSup; n++)
+					if (getScene()->m_jittering == 1)
+						sum += trace(scene,
+							X + m * deltaX + ((double)rand() / RAND_MAX - 0.5) / double(buffer_width),
+							Y + n * deltaY + ((double)rand() / RAND_MAX - 0.5) / double(buffer_height));
+					else 
+						sum += trace(scene, X + m * deltaX, Y + n * deltaY);
+			col = sum / (numSup * numSup);
+		}
 
 	unsigned char *pixel = buffer + ( i + j * buffer_width ) * 3;
 

@@ -38,6 +38,8 @@ public:
 	Fl_Slider* m_jittering_;
 	Fl_Slider* m_background_;
 	Fl_Slider* m_texture_;
+	Fl_Slider* m_adapt_;
+	Fl_Slider* m_adaptDiff_;
 
 	Fl_Check_Button * m_glossyButton;
 	Fl_Check_Button * m_SSButton;
@@ -64,12 +66,14 @@ public:
 	int m_jittering = 0;
 	int m_background = 0;
 	int m_texture = 0;
+	int m_adapt = 0;
 
 	double m_attConstant;
 	double m_attLinear;
 	double m_attQuatric;
 	double m_ambient = 1;
 	double m_threshold;
+	double m_adaptDiff;
 
 	unsigned char* m_backgroundData;
 	unsigned char* m_textureData;
@@ -110,6 +114,8 @@ private:
 	static void cb_jittering(Fl_Widget* o, void* v);
 	static void cb_background(Fl_Widget* o, void* v);
 	static void cb_texture(Fl_Widget* o, void* v);
+	static void cb_adapt(Fl_Widget* o, void* v);
+	static void cb_adaptDiff(Fl_Widget* o, void* v);
 
 	static void cb_soft(Fl_Widget* o, void* v);
 

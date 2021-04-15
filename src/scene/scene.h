@@ -261,6 +261,9 @@ public:
 	int m_jittering = 0;
 	int m_background = 0;
 	int m_texture = 0;
+	int m_adapt = 0;
+	int m_nDepth = 0;
+	double m_adaptDiff = 0.5;
 	double m_attConstant;
 	double m_attLinear;
 	double m_attQuatric;

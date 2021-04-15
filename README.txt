@@ -5,5 +5,6 @@
 [1] background image (../bonus/testBackground.ray)
 [1] overlapping objects (../bonus/refra_overlapping.ray)
 [1.5] texture mapping (../bonus/testTexture.ray)
+[1.5] antialiasing by adaptive supersampling
 [2] Glossy Reflection && Refraction	(../bonus/glossyReflection.ray and ../simpleSamples/sphere_refract.ray)
 [1.5] Soft Shadow
