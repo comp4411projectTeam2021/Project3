@@ -34,7 +34,7 @@ public:
               const vec3f& d, const vec3f& r, const vec3f& t, double sh, double in)
         : ke( e ), ka( a ), ks( s ), kd( d ), kr( r ), kt( t ), shininess( sh ), index( in ) {}
 
-	virtual vec3f shade( Scene *scene, const ray& r, const isect& i ) const;
+	virtual vec3f shade( Scene *scene, const ray& r, const isect& i, void* UI) const;
 
     vec3f ke;                    // emissive
     vec3f ka;                    // ambient
@@ -85,3 +85,6 @@ operator*( double d, Material m )
 // extern Material THE_DEFAULT_MATERIAL;
 
 #endif // __MATERIAL_H__
+
+
+vec3f getDisplacePoint(float x, float y, vec3f n, vec3f p);

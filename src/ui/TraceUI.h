@@ -42,6 +42,7 @@ public:
 	Fl_Slider* m_adaptDiff_;
 
 	Fl_Check_Button * m_glossyButton;
+	Fl_Check_Button * m_SSButton;
 
 
 	Fl_Button*			m_renderButton;
@@ -78,6 +79,7 @@ public:
 	unsigned char* m_textureData;
 	
 	bool		m_Glossy = false;
+	bool		m_SoftShadow = false;
 
 
 private:
@@ -114,6 +116,8 @@ private:
 	static void cb_texture(Fl_Widget* o, void* v);
 	static void cb_adapt(Fl_Widget* o, void* v);
 	static void cb_adaptDiff(Fl_Widget* o, void* v);
+
+	static void cb_soft(Fl_Widget* o, void* v);
 
 	static void cb_glossy(Fl_Widget* o, void* v);
 

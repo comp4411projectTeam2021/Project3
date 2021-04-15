@@ -176,6 +176,9 @@ void TraceUI::cb_texture(Fl_Widget* o, void* v)
 	((TraceUI*)(o->user_data()))->m_texture = int(((Fl_Slider*)o)->value());
 }
 
+void TraceUI::cb_soft(Fl_Widget* o, void* v) {
+	((TraceUI*)(o->user_data()))->m_SoftShadow = bool(((Fl_Check_Button*)o)->value());
+}
 void TraceUI::cb_adapt(Fl_Widget* o, void* v)
 {
 	((TraceUI*)(o->user_data()))->m_adapt = int(((Fl_Slider*)o)->value());
@@ -503,6 +506,11 @@ TraceUI::TraceUI() {
 		m_glossyButton->callback(cb_glossy);
 		m_glossyButton->user_data((void*)(this));
 		//m_glossyButton->callback(cb_render);
+		m_SSButton = new Fl_Check_Button(90, 310, 70, 25, "&Soft Shadow ");
+		m_SSButton->value(m_SoftShadow);
+		m_SSButton->callback(cb_soft);
+		m_SSButton->user_data((void*)(this));
+
 
 		m_renderButton = new Fl_Button(240, 27, 70, 25, "&Render");
 		m_renderButton->user_data((void*)(this));

@@ -2,6 +2,7 @@
 #include "material.h"
 #include "light.h"
 #include <iostream>
+#include "../ui/TraceUI.h"
 static Material* Air = nullptr;
 
 Material* Material::getAir()
@@ -14,7 +15,7 @@ Material* Material::getAir()
 
 // Apply the phong model to this point on the surface of the object, returning
 // the color of that point.
-vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
+vec3f Material::shade(Scene* scene, const ray& r, const isect& i, void* UI) const
 {
 	// YOUR CODE HERE
 
@@ -25,8 +26,8 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 
 	// Your mission is to fill in this method with the rest of the phong
 	// shading model, including the contributions of all the light sources.
-    // You will need to call both distanceAttenuation() and shadowAttenuation()
-    // somewhere in your code in order to compute shadows and light falloff.
+	// You will need to call both distanceAttenuation() and shadowAttenuation()
+	// somewhere in your code in order to compute shadows and light falloff.
 
 	vec3f N = i.N;
 	vec3f V = r.getDirection();
@@ -37,13 +38,13 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 	iter j;
 	for (j = scene->beginLights(); j != scene->endLights(); ++j)
 	{
-		
+
 		vec3f L = (*j)->getDirection(P);
 		vec3f R = (L - 2 * (N * L) * N).normalize();
 
 		vec3f diffuse;
 		vec3f uObj, vObj; //std::cout << i.obj->getObjUV(r,  uObj, vObj) << std::endl;
-		if (scene->m_textureData && scene->m_texture == 1 && i.obj->getObjUV(r,  uObj, vObj))
+		if (scene->m_textureData && scene->m_texture == 1 && i.obj->getObjUV(r, uObj, vObj))
 			if (uObj[0] > 0.000001 && vObj[0] > 0.000001)
 			{
 				//std::cout << "aaa" << std::endl;
@@ -56,22 +57,38 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 			diffuse = maximum(0, N * L) * kd;
 
 		double theta = maximum(0, R * V);
-		vec3f specular = pow(theta, shininess * 128)*ks;
+		vec3f specular = pow(theta, shininess * 128) * ks;
 
-		pointColor +=
-			prod
-			(
-				prod((*j)->distanceAttenuation(P) * (*j)->shadowAttenuation(P), (*j)->getColor(P)),
-				prod
-				(
-					diffuse,
-					vec3f(1, 1, 1) - kt
-				)
-				+
-				specular
-			);
+
+		bool isSoft = ((TraceUI*)UI)->m_SoftShadow;
 		
+		float displacement = isSoft?0.05:0;
+		float samplePoints = isSoft?9:1;
+
+		for (float dx = -displacement; dx <= displacement; dx += 2 * displacement / (sqrt(samplePoints)-1)) {
+
+			for (float dy = -displacement; dy <= displacement; dy += 2 * displacement / (sqrt(samplePoints) - 1)) {
+				vec3f reamSamplePoint = getDisplacePoint(P[0] + dx, P[1] + dy,N,P);
+				pointColor += (1/ samplePoints)*
+					(prod(
+						prod((*j)->distanceAttenuation(reamSamplePoint) * (*j)->shadowAttenuation(reamSamplePoint), (*j)->getColor(reamSamplePoint)),
+						prod(
+							diffuse,
+							vec3f(1, 1, 1) - kt
+						)
+						+
+						specular
+					));
+			}
+		}
+
 	}
 
 	return pointColor.clamp();
+}
+
+vec3f getDisplacePoint(float x, float y, vec3f n, vec3f p) {
+
+	float z = (-n[0] * (x - p[0]) - n[1] * (y - p[1])) / (n[2]) + p[2];
+	return vec3f(x, y, isnan(z)?p[2]:0);
 }
