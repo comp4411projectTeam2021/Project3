@@ -178,6 +178,7 @@ void TraceUI::cb_texture(Fl_Widget* o, void* v)
 
 void TraceUI::cb_soft(Fl_Widget* o, void* v) {
 	((TraceUI*)(o->user_data()))->m_SoftShadow = bool(((Fl_Check_Button*)o)->value());
+}
 void TraceUI::cb_adapt(Fl_Widget* o, void* v)
 {
 	((TraceUI*)(o->user_data()))->m_adapt = int(((Fl_Slider*)o)->value());
