@@ -39,9 +39,9 @@ double PointLight::distanceAttenuation( const vec3f& P ) const
 	// of the light based on the distance between the source and the 
 	// point P.  For now, I assume no attenuation and just return 1.0
 	
-	//double distance = 1.0 / (getScene()->m_attConstant + getScene()->m_attLinear * (position - P).length() + getScene()->m_attQuatric * (position - P).length_squared());
-	//return minimum(1.0 / (getScene()->m_attConstant + getScene()->m_attLinear * (position - P).length() + getScene()->m_attQuatric * (position - P).length_squared()), 1.0);
-	return minimum(1.0 / (constant_attenuation_coeff + linear_attenuation_coeff * (position - P).length() + quadratic_attenuation_coeff * (position - P).length_squared()),1.0);
+	double distance = 1.0 / (getScene()->m_attConstant + getScene()->m_attLinear * (position - P).length() + getScene()->m_attQuatric * (position - P).length_squared());
+	return minimum(1.0 / (getScene()->m_attConstant + getScene()->m_attLinear * (position - P).length() + getScene()->m_attQuatric * (position - P).length_squared()), 1.0);
+	//return minimum(1.0 / (constant_attenuation_coeff + linear_attenuation_coeff * (position - P).length() + quadratic_attenuation_coeff * (position - P).length_squared()),1.0);
 }
 
 vec3f PointLight::getColor( const vec3f& P ) const

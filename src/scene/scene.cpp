@@ -149,13 +149,27 @@ bool Scene::intersect( const ray& r, isect& i ) const
 
 	isect cur;
 	bool have_one = false;
-
+	
 	// try the non-bounded objects
 	for( j = nonboundedobjects.begin(); j != nonboundedobjects.end(); ++j ) {
 		if( (*j)->intersect( r, cur ) ) {
 			if((cur.t >= EPSILONS) && (!have_one || (cur.t < i.t))) {
 				i = cur;
 				have_one = true;
+
+				vec3f uObj, vObj;
+				if (m_NormalData && i.obj->getObjUV(r, uObj, vObj)) {
+					if (uObj[0] > 0.000001 && vObj[0] > 0.000001)
+					{
+						//std::cout << "aaa" << std::endl;
+
+						unsigned char* pixel = m_NormalData + (int(vObj[0] * texture_height) * texture_width + int(uObj[0] * texture_width)) * 3;
+						//printf("u:%f,v:%f \n", uObj[0], vObj[0]);
+						vec3f MapNormal = vec3f(pixel[0], pixel[1], pixel[2]).normalize();
+						i.N = (*j)->GetTransform()->localToGlobalCoords(MapNormal);
+
+					}
+				}
 			}
 		}
 	}
@@ -165,7 +179,22 @@ bool Scene::intersect( const ray& r, isect& i ) const
 		if( (*j)->intersect( r, cur ) ) {
 			if((cur.t>= EPSILONS) && (!have_one || (cur.t < i.t ) )) {
 				i = cur;
+
+				vec3f uObj, vObj;
+				if (m_NormalData != nullptr && i.obj->getObjUV(r, uObj, vObj)) {
+					if (uObj[0] > 0.000001 && vObj[0] > 0.000001)
+					{
+						//std::cout << "aaa" << std::endl;
+
+						unsigned char* pixel = m_NormalData + (int(vObj[0] * texture_height) * texture_width + int(uObj[0] * texture_width)) * 3;
+						//printf("u:%f,v:%f \n", uObj[0], vObj[0]);
+						vec3f MapNormal = -(vec3f(pixel[0], pixel[1], pixel[2])) .normalize();
+						i.N = (*j)->GetTransform()->localToGlobalCoordsNormal(MapNormal);
+						
+					}
+				}
 				have_one = true;
+
 			}
 		}
 	}

@@ -57,6 +57,9 @@ vec3f Material::shade(Scene* scene, const ray& r, const isect& i, void* UI) cons
 		else
 			diffuse = maximum(0, N * L) * kd;
 
+
+	
+
 		double theta = maximum(0, R * V);
 		vec3f specular = pow(theta, shininess * 128) * ks;
 

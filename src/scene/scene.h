@@ -200,6 +200,10 @@ public:
 	Geometry( Scene *scene ) 
 		: SceneElement( scene ) {}
 
+	TransformNode* GetTransform() {
+		return transform;
+	}
+
 protected:
 	BoundingBox bounds;
     TransformNode *transform;
@@ -255,6 +259,7 @@ public:
     TransformRoot transformRoot;
 
 	unsigned char* m_textureData = nullptr;
+	unsigned char* m_NormalData = nullptr;
 	int texture_width = 0;
 	int texture_height = 0;
 	int m_supersampling = 1;

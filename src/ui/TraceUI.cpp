@@ -90,6 +90,25 @@ void TraceUI::cb_load_texture(Fl_Menu_* o, void* v)
 	}//std::cout << "aaa" << std::endl;
 }
 
+void TraceUI::cb_load_normal(Fl_Menu_* o, void* v)
+{
+	TraceUI* pUI = whoami(o);
+
+	char* newfile = fl_file_chooser("Open normal?", "*.bmp", NULL);
+	if (newfile != NULL)
+	{
+		int width, height;
+		unsigned char* data = readBMP(newfile, width, height);
+		if (data != NULL)
+			pUI->m_NormalData = data;
+		else
+			fl_alert("normal loading error!");
+
+		pUI->normal_height = height;
+		pUI->normal_width = width;
+	}//std::cout << "aaa" << std::endl;
+}
+
 void TraceUI::cb_exit(Fl_Menu_* o, void* v)
 {
 	TraceUI* pUI=whoami(o);
@@ -229,6 +248,7 @@ void TraceUI::cb_render(Fl_Widget* o, void* v)
 		pUI->raytracer->getScene()->texture_width = pUI->texture_width;
 		pUI->raytracer->getScene()->texture_height = pUI->texture_height;
 		pUI->raytracer->getScene()->m_textureData = pUI->m_textureData;
+		pUI->raytracer->getScene()->m_NormalData = pUI->m_NormalData;
 
 		pUI->raytracer->getScene()->m_nDepth = pUI->m_nDepth;
 		pUI->raytracer->getScene()->m_attConstant = pUI->m_attConstant;
@@ -337,6 +357,7 @@ Fl_Menu_Item TraceUI::menuitems[] = {
 		{ "&Save Image...",	FL_ALT + 's', (Fl_Callback *)TraceUI::cb_save_image },
 		{ "&Load Background...",	FL_ALT + 'b', (Fl_Callback*)TraceUI::cb_load_background },
 		{ "&Load Texture...",	FL_ALT + 't', (Fl_Callback*)TraceUI::cb_load_texture },
+		{ "&Load Texture...",	FL_ALT + 't', (Fl_Callback*)TraceUI::cb_load_normal },
 		{ "&Exit",			FL_ALT + 'e', (Fl_Callback *)TraceUI::cb_exit },
 		{ 0 },
 
@@ -391,7 +412,7 @@ TraceUI::TraceUI() {
 		m_attConstant_->minimum(0.00);
 		m_attConstant_->maximum(1.00);
 		m_attConstant_->step(0.001);
-		m_attConstant_->value(0.1);
+		m_attConstant_->value(1);
 		m_attConstant_->align(FL_ALIGN_RIGHT);
 		m_attConstant_->callback(cb_attenuationConstant);
 
@@ -403,7 +424,7 @@ TraceUI::TraceUI() {
 		m_attLinear_->minimum(0.00);
 		m_attLinear_->maximum(1.00);
 		m_attLinear_->step(0.001);
-		m_attLinear_->value(0.1);
+		m_attLinear_->value(0.2);
 		m_attLinear_->align(FL_ALIGN_RIGHT);
 		m_attLinear_->callback(cb_attenuationLinear);
 
@@ -414,8 +435,8 @@ TraceUI::TraceUI() {
 		m_attQuatric_->labelsize(12);
 		m_attQuatric_->minimum(0.00);
 		m_attQuatric_->maximum(1.00);
-		m_attQuatric_->step(0.001);
-		m_attQuatric_->value(0.1);
+		m_attQuatric_->step(0.1);
+		m_attQuatric_->value();
 		m_attQuatric_->align(FL_ALIGN_RIGHT);
 		m_attQuatric_->callback(cb_attenuationQuatric);
 
