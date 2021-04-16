@@ -59,7 +59,7 @@ vec3f Material::shade(Scene* scene, const ray& r, const isect& i, void* UI) cons
 		double theta = maximum(0, R * V);
 		vec3f specular = pow(theta, shininess * 128) * ks;
 
-
+		//Soft Shadow	
 		bool isSoft = ((TraceUI*)UI)->m_SoftShadow;
 		
 		float displacement = isSoft?0.05:0;
@@ -81,6 +81,7 @@ vec3f Material::shade(Scene* scene, const ray& r, const isect& i, void* UI) cons
 					));
 			}
 		}
+		//Soft Shadow end
 
 	}
 
@@ -90,5 +91,5 @@ vec3f Material::shade(Scene* scene, const ray& r, const isect& i, void* UI) cons
 vec3f getDisplacePoint(float x, float y, vec3f n, vec3f p) {
 
 	float z = (-n[0] * (x - p[0]) - n[1] * (y - p[1])) / (n[2]) + p[2];
-	return vec3f(x, y, isnan(z)?p[2]:0);
+	return vec3f(x, y, isnan(z)?p[2]:z);
 }
