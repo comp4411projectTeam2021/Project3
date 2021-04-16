@@ -49,6 +49,7 @@ vec3f Material::shade(Scene* scene, const ray& r, const isect& i, void* UI) cons
 			{
 				//std::cout << "aaa" << std::endl;
 				unsigned char* pixel = scene->m_textureData + (int(vObj[0] * scene->texture_height) * scene->texture_width + int(uObj[0] * scene->texture_width)) * 3;
+				//printf("u:%f,v:%f \n", uObj[0], vObj[0]);
 				diffuse = vec3f((float)pixel[0] / 255.0f, (float)pixel[1] / 255.0f, (float)pixel[2] / 255.0f).clamp();
 			}
 			else
