@@ -18,6 +18,7 @@
 default_random_engine e;
 
 uniform_real_distribution<float> random(-0.1, 0.1);
+uniform_real_distribution<float> random3(-0.05, 0.05);
 normal_distribution<float> random2(0,0.03);
 
 // Trace a top-level ray through normalized window coordinates (x,y)
@@ -31,7 +32,32 @@ vec3f RayTracer::trace( Scene *scene, double x, double y )
     scene->getCamera()->rayThrough( x,y,r );
 	std::stack<Material*> materials;
 	materials.push(Material::getAir());
-	return traceRay( scene, r, scene->m_threshold, 0 , materials).clamp();
+
+	// DOF
+	vec3f dofContribution = vec3f(0, 0, 0);
+	float dofRays = 0;
+
+	double focusDis = ((TraceUI*)UI)->focusLength;
+	if (((TraceUI*)UI)->m_DOF ) {		//depth of field
+		vec3f focPoint = r.at(focusDis);
+		dofRays = 10;// num of rays
+		vec3f ranDir = r.at(1);
+		for (int i = 0; i < dofRays; i++) {
+
+
+			ranDir += random3(e) * ((TraceUI*)UI)->apa * scene->getCamera()->u;
+			ranDir += random3(e) * ((TraceUI*)UI)->apa * scene->getCamera()->v;
+
+			ray dofRay = ray(ranDir, (focPoint - ranDir).normalize());
+
+			dofContribution += 1.0 / (dofRays + 1) * traceRay(scene, dofRay, scene->m_threshold, 0, materials);
+		}
+	}
+	//DOF end
+
+	return (dofContribution + 1.0 / (dofRays + 1) * traceRay(scene, r, scene->m_threshold, 0, materials)).clamp();
+
+
 }
 
 // Do recursive ray tracing!  You'll want to insert a lot of code here
@@ -55,15 +81,17 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 		// Instead of just returning the result of shade(), add some
 		// more steps: add in the contributions from reflected and refracted
 		// rays.
+		vec3f reflection = vec3f(0, 0, 0);
+		vec3f refraction = vec3f(0, 0, 0);
+
+
+
+
 		const Material& m = i.getMaterial();
 
 
 
-		if (depth > 0) {
-			printf("");
-		}
-		vec3f reflection = vec3f( 0, 0, 0 );
-		vec3f refraction = vec3f(0, 0, 0);
+
 		if (depth < ((TraceUI*)UI)->getDepth()) {
 			vec3f in = (r.at(i.t) - r.getPosition()).normalize();
 			i.N = i.N.normalize();
@@ -149,7 +177,7 @@ canRef:
 			}
 			
 		}		
-		return m.shade(scene, r, i,UI)  + prod(m.kr , reflection) + prod(m.kt, refraction);
+		return (m.shade(scene, r, i,UI)  + prod(m.kr , reflection) + prod(m.kt, refraction)).clamp();
 	
 	} else {
 		// No intersection.  This ray travels to infinity, so we color

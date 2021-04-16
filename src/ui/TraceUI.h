@@ -40,9 +40,12 @@ public:
 	Fl_Slider* m_texture_;
 	Fl_Slider* m_adapt_;
 	Fl_Slider* m_adaptDiff_;
+	Fl_Slider* m_focalLength_;
+	Fl_Slider* m_Apa_;
 
 	Fl_Check_Button * m_glossyButton;
 	Fl_Check_Button * m_SSButton;
+	Fl_Check_Button * m_DOFButton;
 
 
 	Fl_Button*			m_renderButton;
@@ -80,6 +83,10 @@ public:
 	
 	bool		m_Glossy = false;
 	bool		m_SoftShadow = false;
+	bool		m_DOF = false;
+
+	float focusLength = 3.0;
+	float apa = 1;
 
 
 private:
@@ -114,8 +121,13 @@ private:
 	static void cb_jittering(Fl_Widget* o, void* v);
 	static void cb_background(Fl_Widget* o, void* v);
 	static void cb_texture(Fl_Widget* o, void* v);
+	static void cb_dof(Fl_Widget* o, void* v);
 	static void cb_adapt(Fl_Widget* o, void* v);
 	static void cb_adaptDiff(Fl_Widget* o, void* v);
+
+	static void cb_focalLength(Fl_Widget* o, void* v);
+
+	static void cb_Apa(Fl_Widget* o, void* v);
 
 	static void cb_soft(Fl_Widget* o, void* v);
 

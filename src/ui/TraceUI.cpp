@@ -179,6 +179,10 @@ void TraceUI::cb_texture(Fl_Widget* o, void* v)
 void TraceUI::cb_soft(Fl_Widget* o, void* v) {
 	((TraceUI*)(o->user_data()))->m_SoftShadow = bool(((Fl_Check_Button*)o)->value());
 }
+
+void TraceUI::cb_dof(Fl_Widget* o, void* v) {
+	((TraceUI*)(o->user_data()))->m_DOF = bool(((Fl_Check_Button*)o)->value());
+}
 void TraceUI::cb_adapt(Fl_Widget* o, void* v)
 {
 	((TraceUI*)(o->user_data()))->m_adapt = int(((Fl_Slider*)o)->value());
@@ -187,6 +191,16 @@ void TraceUI::cb_adapt(Fl_Widget* o, void* v)
 void TraceUI::cb_adaptDiff(Fl_Widget* o, void* v)
 {
 	((TraceUI*)(o->user_data()))->m_adaptDiff = double(((Fl_Slider*)o)->value());
+}
+
+void TraceUI::cb_focalLength(Fl_Widget* o, void* v)
+{
+	((TraceUI*)(o->user_data()))->focusLength = double(((Fl_Slider*)o)->value());
+}
+
+void TraceUI::cb_Apa(Fl_Widget* o, void* v)
+{
+	((TraceUI*)(o->user_data()))->apa = double(((Fl_Slider*)o)->value());
 }
 
 void TraceUI::cb_glossy(Fl_Widget* o, void* v) {
@@ -506,10 +520,39 @@ TraceUI::TraceUI() {
 		m_glossyButton->callback(cb_glossy);
 		m_glossyButton->user_data((void*)(this));
 		//m_glossyButton->callback(cb_render);
-		m_SSButton = new Fl_Check_Button(90, 310, 70, 25, "&Soft Shadow ");
+		m_SSButton = new Fl_Check_Button(90, 355, 70, 25, "&Soft Shadow ");
 		m_SSButton->value(m_SoftShadow);
 		m_SSButton->callback(cb_soft);
 		m_SSButton->user_data((void*)(this));
+
+		m_DOFButton = new Fl_Check_Button(210, 355, 70, 25, "&DOF ");
+		m_DOFButton->value(m_DOF);
+		m_DOFButton->callback(cb_dof);
+		m_DOFButton->user_data((void*)(this));
+
+		m_focalLength_ = new Fl_Value_Slider(10, 380, 180, 20, "Focal Length");
+		m_focalLength_->user_data((void*)(this));	// record self to be used by static callback functions
+		m_focalLength_->type(FL_HOR_NICE_SLIDER);
+		m_focalLength_->labelfont(FL_COURIER);
+		m_focalLength_->labelsize(12);
+		m_focalLength_->minimum(0.01);
+		m_focalLength_->maximum(5.0);
+		m_focalLength_->step(0.01);
+		m_focalLength_->value(3);
+		m_focalLength_->align(FL_ALIGN_RIGHT);
+		m_focalLength_->callback(cb_focalLength);
+
+		m_Apa_ = new Fl_Value_Slider(10, 400, 180, 20, "Aperture");
+		m_Apa_->user_data((void*)(this));	// record self to be used by static callback functions
+		m_Apa_->type(FL_HOR_NICE_SLIDER);
+		m_Apa_->labelfont(FL_COURIER);
+		m_Apa_->labelsize(12);
+		m_Apa_->minimum(0.1);
+		m_Apa_->maximum(5.0);
+		m_Apa_->step(0.1);
+		m_Apa_->value(1);
+		m_Apa_->align(FL_ALIGN_RIGHT);
+		m_Apa_->callback(cb_Apa);
 
 
 		m_renderButton = new Fl_Button(240, 27, 70, 25, "&Render");
