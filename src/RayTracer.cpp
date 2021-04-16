@@ -312,22 +312,22 @@ vec3f RayTracer::adaptSupper(const double X, const double Y, const double deltaX
 		if ((midP - diffP[0]).length() > scene->m_adaptDiff)
 		{
 			sum += adaptSupper(X - deltaX / 4.0, Y + deltaY / 4.0, deltaX / 2.0, deltaY / 2.0, depth + 1);
-			count++;
+			count = count + 1;
 		}
 		if ((midP - diffP[1]).length() > scene->m_adaptDiff)
 		{
 			sum += adaptSupper(X + deltaX / 4.0, Y + deltaY / 4.0, deltaX / 2.0, deltaY / 2.0, depth + 1);
-			count++;
+			count = count + 1;
 		}
 		if ((midP - diffP[2]).length() > scene->m_adaptDiff)
 		{
 			sum += adaptSupper(X - deltaX / 4.0, Y - deltaY / 4.0, deltaX / 2.0, deltaY / 2.0, depth + 1);
-			count++;
+			count = count + 1;
 		}
 		if ((midP - diffP[3]).length() > scene->m_adaptDiff)
 		{
 			sum += adaptSupper(X + deltaX / 4.0, Y - deltaY / 4.0, deltaX / 2.0, deltaY / 2.0, depth + 1);
-			count++;
+			count = count + 1;
 		}
 		return sum / count;
 	}
@@ -343,7 +343,7 @@ void RayTracer::tracePixel( int i, int j )
 
 	double x = double(i)/double(buffer_width);
 	double y = double(j)/double(buffer_height);
-	
+
 	if (scene->m_adapt == 1 && scene->m_nDepth >= 2)
 		col = adaptSupper(x, y, 1.0 / double(buffer_width), 1.0 / double(buffer_height), 1);
 	else//adapt supper close, supper sample and jittering is available
@@ -352,8 +352,8 @@ void RayTracer::tracePixel( int i, int j )
 				col = trace(scene, x, y);
 			else
 				col = trace(scene,
-					x + ((double)rand() / RAND_MAX - 0.5) / double(buffer_width),
-					y + ((double)rand() / RAND_MAX - 0.5) / double(buffer_height));
+					x + ((double)rand() / (double)RAND_MAX - 0.5) / double(buffer_width),
+					y + ((double)rand() / (double)RAND_MAX - 0.5) / double(buffer_height));
 		else
 		{
 			vec3f sum = vec3f(0, 0, 0);
