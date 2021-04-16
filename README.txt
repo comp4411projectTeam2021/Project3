@@ -10,3 +10,5 @@
 [1.5] Soft Shadow
 [1.5] DOF
 [2] Glossy Reflection && Refraction	(../bonus/glossyReflection.ray and ../simpleSamples/sphere_refract.ray)
+
+total: 14 bells
